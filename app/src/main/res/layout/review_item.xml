@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <android.support.v7.widget.CardView
+        android:id="@+id/review_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="3dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="2dp">
+
+            <TextView
+                android:id="@+id/review_author_text_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="serif"
+                android:padding="2dp"
+                android:text="Rahul Gupta"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/review_content_text_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/review_author_text_view"
+                android:fontFamily="serif"
+                android:maxLines="10"
+                android:paddingBottom="2dp"
+                android:paddingEnd="3dp"
+                android:paddingStart="3dp"
+                android:text="Know your enemy's weakness before challenging to a fight!\r\n\r\nIt is known that critics have no brain. It is the best Superman film as Henry Cavill in the red and blue suit. Yep, I know it is always DC versus Marvel, so it is then DC's reply to the 'Avengers'. I don't care their rivalries, as a film fanatic, I enjoy good films and I found it was so good. But I was a bit worried after the Superman was shown in a dark shade in the trailer, especially after Batwan was overly stylised by Nolan, I thought the black suit would take over. After watching the film I was relieved and happy that Batman was exposed.\r\n\r\nBatman fans might have been disappointed, but for the superhero and DC fans, this film is a great treat. You can't compare it with 'Avengers', it had its own style. It follows the 'Man of Steel' and directed by the same director. Excellent cast. I have never been the Ben Affleck hater, so I had no objection to his role in this. He did good along with Cavill and others. He would do better in his solo Batman films if Zack Snyder is retained to script and direct them.\r\n\r\nI'm not a comic book reader, so I did not know the story before the watch. I was surprised for the Wonder Woman's part in the film. The visuals were awesome, the story was unpredictable, well developed characters, cleverly composed scenes, wonderful stunt sequences and the film's overall tone was kind of dark and gloomy, a very satisfying superhero film. The content balance was perfect, but the characters did not do the same as we know Superman is a father of all superheroes.\r\n\r\nI already watched it twice and I can't wait for its sequel. Especially looking forward for Jesse Eisenberg, because he was kind of stayed low in this and I hope his character Lex becomes much stronger. It is a PG13, and there's nothing botherable stuffs in it for the underage audience, but I felt it is targeted for adults because of the matured flavour. Don't think about that I said, just watch it, it will definitely entertain you well if not blow you away. Surely recommended to all.\n\n8/10"
+                android:textSize="10sp" />
+
+
+        </RelativeLayout>
+
+    </android.support.v7.widget.CardView>
+
+</RelativeLayout>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="200dp"
+    android:layout_height="wrap_content"
+    android:layout_margin="2dp">
+
+    <android.support.v7.widget.CardView
+        android:id="@+id/trailer_card_view"
+        android:layout_width="195dp"
+        android:layout_height="150dp"
+        android:layout_margin="10dp"
+        app:cardElevation="2dp">
+
+        <RelativeLayout
+            android:background="@drawable/black_border_button_white_thin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/trailer_image_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:src="@drawable/placeholder_no_image_available" />
+
+            <ImageView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_centerInParent="true"
+                android:scaleType="centerInside"
+                android:src="@drawable/youtube_play_button" />
+
+        </RelativeLayout>
+
+    </android.support.v7.widget.CardView>
+
+    <TextView
+        android:id="@+id/trailer_name_text_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/trailer_card_view"
+        android:layout_centerHorizontal="true"
+        android:fontFamily="serif"
+        android:gravity="center"
+        android:textSize="12sp" />
+
+
+</RelativeLayout>

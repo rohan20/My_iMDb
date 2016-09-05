@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <group android:checkableBehavior="single">
+
+        <item
+            android:id="@+id/actiom_refresh"
+            android:icon="@drawable/ic_refresh_white_36dp"
+            android:orderInCategory="0"
+            android:title="Refresh"
+            app:showAsAction="always" />
+
+
+        <item
+            android:id="@+id/action_popular_movies"
+            android:orderInCategory="1"
+            android:title="Popular Movies"
+            app:showAsAction="never" />
+
+        <item
+            android:id="@+id/action_highest_rated"
+            android:orderInCategory="2"
+            android:title="Highest Rated"
+            app:showAsAction="never" />
+
+        <item
+            android:id="@+id/action_favourites"
+            android:orderInCategory="3"
+            android:title="Favourites"
+            app:showAsAction="never" />
+
+
+    </group>
+</menu>
+
