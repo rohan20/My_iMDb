@@ -7,21 +7,32 @@
     tools:context="com.rohan.myimdb.MovieDetailsFragment">
 
     <RelativeLayout
+        android:id="@+id/parent_details_relative_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <com.daimajia.slider.library.SliderLayout
-        android:id="@+id/image_slider"
-        android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:layout_alignParentTop="true" />
+            android:id="@+id/image_slider"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:layout_alignParentTop="true" />
+
+        <TextView
+            android:id="@+id/title_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/image_slider"
+            android:background="#f5f5f5"
+            android:fontFamily="serif"
+            android:padding="5dp"
+            android:textSize="16sp" />
 
         <TextView
             android:id="@+id/duration_text_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
-            android:layout_below="@id/image_slider"
+            android:layout_below="@id/title_text_view"
             android:fontFamily="serif"
             android:padding="5dp"
             android:textSize="14sp" />
@@ -31,7 +42,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
-            android:layout_below="@id/image_slider"
+            android:layout_below="@id/title_text_view"
             android:layout_toStartOf="@id/duration_text_view"
             android:fontFamily="serif"
             android:padding="5dp"
@@ -124,9 +135,9 @@
                         android:layout_weight="1"
                         android:fontFamily="serif"
                         android:gravity="center"
-                        app:sparkbutton_activeImage="@drawable/ic_star_yellow_a400_36dp"
+                        app:sparkbutton_inActiveImage="@drawable/ic_star_yellow_a400_36dp"
                         app:sparkbutton_iconSize="45dp"
-                        app:sparkbutton_inActiveImage="@drawable/ic_star_border_grey_500_36dp" />
+                        app:sparkbutton_activeImage="@drawable/ic_star_border_grey_500_36dp" />
 
                 </LinearLayout>
 
@@ -135,13 +146,13 @@
         </LinearLayout>
 
         <TextView
-            android:fontFamily="serif"
-            android:background="#f5f5f5"
-            android:padding="5dp"
             android:id="@+id/cast_crew_text_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/poster_linear_layout"
+            android:background="#f5f5f5"
+            android:fontFamily="serif"
+            android:padding="5dp"
             android:text="Top Billed Cast" />
 
         <android.support.v7.widget.RecyclerView
@@ -154,13 +165,13 @@
         <!--top billed cast horizontal recycler view-->
 
         <TextView
-            android:fontFamily="serif"
-            android:background="#f5f5f5"
-            android:padding="5dp"
             android:id="@+id/reviews_text_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/cast_recycler_view"
+            android:background="#f5f5f5"
+            android:fontFamily="serif"
+            android:padding="5dp"
             android:text="Reviews" />
 
         <android.support.v7.widget.RecyclerView
@@ -173,13 +184,13 @@
         <!--review cards recycler view-->
 
         <TextView
-            android:fontFamily="serif"
-            android:background="#f5f5f5"
-            android:padding="5dp"
             android:id="@+id/trailers_text_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/reviews_recycler_view"
+            android:background="#f5f5f5"
+            android:fontFamily="serif"
+            android:padding="5dp"
             android:text="Trailers" />
 
         <android.support.v7.widget.RecyclerView
@@ -192,13 +203,13 @@
         <!--trailers horizontal recycler view-->
 
         <TextView
-            android:fontFamily="serif"
-            android:background="#f5f5f5"
-            android:padding="5dp"
             android:id="@+id/similar_movies_text_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/trailers_recycler_view"
+            android:background="#f5f5f5"
+            android:fontFamily="serif"
+            android:padding="5dp"
             android:text="Similar Movies" />
 
         <android.support.v7.widget.RecyclerView

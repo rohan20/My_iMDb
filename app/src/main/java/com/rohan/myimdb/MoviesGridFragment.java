@@ -3,9 +3,11 @@ package com.rohan.myimdb;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -13,6 +15,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.rohan.myimdb.Adapters.MoviesGridRecyclerViewAdapter;
 import com.rohan.myimdb.Models.Movie;
@@ -25,13 +29,12 @@ import com.rohan.myimdb.Utils.RESTAdapter;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindView;
 import retrofit2.Call;
 import retrofit2.Callback;
 
-// TODO: 18-Jul-16 Movies don't come up initally unless overflowMenuItem/refreshButton is clicked
-// TODO: 18-Jul-16 Popular Movies in overflow menu isn't checked on first run
-
 public class MoviesGridFragment extends Fragment implements AdapterCallback {
+
 
     private RESTAdapter retrofitAdapter;
     private OnMovieSelected onMovieSelectedListener;
@@ -41,13 +44,16 @@ public class MoviesGridFragment extends Fragment implements AdapterCallback {
     private MoviesGridRecyclerViewAdapter mGridAdapter;
     private GridLayoutManager mGridLayoutManager;
 
-    private List<Movie> mMoviesList;
     private List<Movie> mMostPopularMoviesList;
     private List<Movie> mHighestRatedMoviesList;
     private List<Movie> mFavouritesMoviesList;
 
+    Toolbar mToolbar;
     ProgressDialog dialog;
     View rootView;
+    ImageView noFavouritesImage;
+
+    Bundle mSavedInstanceState;
 
     @Override
     public void onAttach(Context context) {
@@ -61,8 +67,21 @@ public class MoviesGridFragment extends Fragment implements AdapterCallback {
 
     }
 
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        onMovieSelectedListener = null;
+    }
+
     public MoviesGridFragment() {
         // Required empty public constructor
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+        mSavedInstanceState = savedInstanceState;
     }
 
     @Override
@@ -76,11 +95,7 @@ public class MoviesGridFragment extends Fragment implements AdapterCallback {
     public void onStart() {
         super.onStart();
 
-        ((MainActivity) getActivity()).hideBackButton();
-        ((MainActivity) getActivity()).setToolbarText("My iMDb", 20);
-
         rootView = getView();
-        setHasOptionsMenu(true);
         init(rootView);
 
         retrofitAdapter = new RESTAdapter(Constants.MOVIES_DB_BASE_URL);
@@ -93,17 +108,24 @@ public class MoviesGridFragment extends Fragment implements AdapterCallback {
 
     private void init(View v) {
 
-        mMoviesList = new ArrayList<>();
         mMostPopularMoviesList = new ArrayList<>();
         mHighestRatedMoviesList = new ArrayList<>();
         mFavouritesMoviesList = new ArrayList<>();
 
         mRecyclerView = (RecyclerView) v.findViewById(R.id.movies_grid_recycler_view);
+        noFavouritesImage = (ImageView) v.findViewById(R.id.no_favourites_present_image);
+
+        mRecyclerView.setVisibility(View.VISIBLE);
+        noFavouritesImage.setVisibility(View.GONE);
+
         mGridAdapter = new MoviesGridRecyclerViewAdapter(getActivity(), this);
-        mGridAdapter.setRecyclerViewList(mMoviesList);
+        mGridAdapter.setRecyclerViewList(mMostPopularMoviesList);
         mGridLayoutManager = new GridLayoutManager(getActivity(), 2);
         mRecyclerView.setAdapter(mGridAdapter);
         mRecyclerView.setLayoutManager(mGridLayoutManager);
+
+        mToolbar = (Toolbar) v.findViewById(R.id.toolbar_movies_grid);
+        ((MainActivity) getActivity()).setSupportActionBar(mToolbar);
     }
 
     private void callApi() {
@@ -116,13 +138,11 @@ public class MoviesGridFragment extends Fragment implements AdapterCallback {
             public void onResponse(Call<ResponseComplete> call, retrofit2.Response<ResponseComplete> response) {
 
                 if (response.isSuccessful()) {
-                    mMoviesList.clear();
+                    mMostPopularMoviesList.clear();
                     mMostPopularMoviesList.addAll(setMoviesList(response));
-                    mMoviesList.addAll(mMostPopularMoviesList);
-                    mGridAdapter.notifyDataSetChanged();
+                    mGridAdapter.setRecyclerViewList(mMostPopularMoviesList);
 
                     dialog.dismiss();
-
                 }
 
             }
@@ -138,7 +158,7 @@ public class MoviesGridFragment extends Fragment implements AdapterCallback {
             public void onResponse(Call<ResponseComplete> call, retrofit2.Response<ResponseComplete> response) {
 
                 if (response.isSuccessful()) {
-                    mMoviesList.clear();
+                    mHighestRatedMoviesList.clear();
                     mHighestRatedMoviesList.addAll(setMoviesList(response));
 
                     dialog.dismiss();
@@ -150,7 +170,6 @@ public class MoviesGridFragment extends Fragment implements AdapterCallback {
                 Log.i("Message", t.getMessage());
             }
         });
-
     }
 
     private List<Movie> setMoviesList(retrofit2.Response<ResponseComplete> response) {
@@ -181,78 +200,66 @@ public class MoviesGridFragment extends Fragment implements AdapterCallback {
 
     @Override
     public void onMovieClickedCallback(String movieID) {
-
-        MovieDetailsFragment fragment = new MovieDetailsFragment();
-        Bundle b = new Bundle();
-        b.putString(Constants.MOVIE_ID, movieID);
-        fragment.setArguments(b);
-
-//        getActivity().getSupportFragmentManager().beginTransaction()
-//                .replace(R.id.container_grid, fragment)
-//                .addToBackStack(null)
-//                .commit();
-
-        if (getActivity().findViewById(R.id.container_details) == null) {
-            getActivity().getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.container_grid, fragment)
-                    .addToBackStack(null)
-                    .commit();
-        } else {
-            getActivity().getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.container_details, fragment)
-                    .addToBackStack(null)
-                    .commit();
-        }
-
+        onMovieSelectedListener.movieSelected(movieID);
     }
 
     public interface OnMovieSelected {
-        void movieSelected();
+        void movieSelected(String id);
     }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater menuInflater) {
-
         menuInflater.inflate(R.menu.menu_main, menu);
-        MenuItem menuItem = menu.getItem(1);
+        MenuItem menuItem = menu.getItem(0);
         menuItem.setChecked(true);
-
-        super.onCreateOptionsMenu(menu, menuInflater);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
-        mMoviesList.clear();
         item.setChecked(true);
+        noFavouritesImage.setVisibility(View.GONE);
+        mRecyclerView.setVisibility(View.VISIBLE);
 
         switch (item.getItemId()) {
 
             case R.id.action_popular_movies:
-                ((MainActivity) getActivity()).setToolbarText("My iMDb", 20);
-                mMoviesList.addAll(mMostPopularMoviesList);
-                mGridAdapter.notifyDataSetChanged();
+                mGridAdapter.setRecyclerViewList(mMostPopularMoviesList);
                 return true;
 
             case R.id.action_highest_rated:
-                ((MainActivity) getActivity()).setToolbarText("My iMDb", 20);
-                mMoviesList.addAll(mHighestRatedMoviesList);
-                mGridAdapter.notifyDataSetChanged();
+                mGridAdapter.setRecyclerViewList(mHighestRatedMoviesList);
                 return true;
 
             case R.id.action_favourites:
-                ((MainActivity) getActivity()).setToolbarText("My iMDb", 20);
-                mMoviesList.addAll(mFavouritesMoviesList);
-                mGridAdapter.notifyDataSetChanged();
+
+                mFavouritesMoviesList.clear();
+                List<Long> favouritesIDList = new DBHelper(getActivity()).getAllFavourites();
+
+                for (Movie movie : mMostPopularMoviesList) {
+                    if (favouritesIDList.contains(movie.getId())) {
+                        mFavouritesMoviesList.add(movie);
+                    }
+                }
+
+                for (Movie movie : mHighestRatedMoviesList) {
+                    if (favouritesIDList.contains(movie.getId())) {
+                        mFavouritesMoviesList.add(movie);
+                    }
+                }
+
+                mGridAdapter.setRecyclerViewList(mFavouritesMoviesList);
+
+                if (mFavouritesMoviesList.size() == 0) {
+                    noFavouritesImage.setVisibility(View.VISIBLE);
+                    mRecyclerView.setVisibility(View.GONE);
+                }
+
                 return true;
 
-            case R.id.actiom_refresh:
-                ((MainActivity) getActivity()).setToolbarText("My iMDb", 20);
-                dialog.show();
-                callApi();
-                return true;
         }
 
         return super.onOptionsItemSelected(item);
     }
+
 }

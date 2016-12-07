@@ -2,6 +2,7 @@ package com.rohan.myimdb.Adapters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +16,8 @@ import com.rohan.myimdb.Utils.Constants;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
+
+import static android.R.attr.id;
 
 /**
  * Created by Rohan on 17-Jul-16.
@@ -45,7 +48,7 @@ public class MoviesGridRecyclerViewAdapter extends RecyclerView.Adapter<MoviesGr
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, final int position) {
+    public void onBindViewHolder(final ViewHolder holder, final int position) {
 
         StringBuilder builder = new StringBuilder();
         builder.append(Constants.IMAGE_PATH_PREFIX)
@@ -60,12 +63,15 @@ public class MoviesGridRecyclerViewAdapter extends RecyclerView.Adapter<MoviesGr
             @Override
             public void onClick(View view) {
 
-                if (position >= mMoviesList.size()) {
+                if (holder.getAdapterPosition() >= mMoviesList.size()) {
                     Toast.makeText(mContext, "Please refresh", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
-                mAdapterCallback.onMovieClickedCallback(mMoviesList.get(position).getId().toString());
+                Log.e("size", mMoviesList.size() + "");
+                Log.e("id", mMoviesList.get(position).getId() + "");
+                long id = mMoviesList.get(position).getId();
+                mAdapterCallback.onMovieClickedCallback(String.valueOf(id));
             }
         });
     }

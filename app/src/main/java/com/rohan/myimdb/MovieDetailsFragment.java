@@ -1,7 +1,11 @@
 package com.rohan.myimdb;
 
+// TODO: 07-Dec-16 View details of 'first movie' in detail fragment when app opens in landscape/tablet mode.
+// TODO: 08-Dec-16 Handle orientation change network calls 
+// TODO: 08-Dec-16  
 
 import android.app.ProgressDialog;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
@@ -11,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -34,6 +39,7 @@ import com.rohan.myimdb.POJOs.ResponseSingleTrailer;
 import com.rohan.myimdb.Utils.Constants;
 import com.rohan.myimdb.Utils.RESTAdapter;
 import com.squareup.picasso.Picasso;
+import com.varunest.sparkbutton.SparkButton;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -47,13 +53,12 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-// TODO: 17-Jul-16 Trailers RecyclerGridView having cards
-// TODO: 17-Jul-16 Reviews StaggeredRecyclerGridView having cards
+import static android.R.attr.id;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class MovieDetailsFragment extends Fragment {
+public class MovieDetailsFragment extends Fragment implements View.OnClickListener {
 
     @BindView(R.id.image_slider)
     SliderLayout mImageSlider;
@@ -71,6 +76,10 @@ public class MovieDetailsFragment extends Fragment {
     TextView mDirectorTextView;
     @BindView(R.id.rating_text_view)
     TextView mRatingTextView;
+    @BindView(R.id.title_text_view)
+    TextView mMovieTitleTextView;
+    @BindView(R.id.add_to_favourites_button)
+    SparkButton mFavouriteSparkButton;
 
     @BindView(R.id.similar_movies_text_view)
     TextView mSimilarMoviesTextView;
@@ -90,6 +99,9 @@ public class MovieDetailsFragment extends Fragment {
     @BindView(R.id.similar_movies_recycler_view)
     RecyclerView mSimilarMoviesRecyclerView;
 
+    @BindView(R.id.parent_details_relative_layout)
+    RelativeLayout mRelativeLayout;
+
     ProgressDialog dialogDetails;
     ProgressDialog dialogCast;
     ProgressDialog dialogReviews;
@@ -98,6 +110,9 @@ public class MovieDetailsFragment extends Fragment {
 
     String movieID;
     RESTAdapter restAdapter;
+    DBHelper dbHelper;
+
+//    private IFavouritesUpdated favouriteUpdatedListener;
 
     Response<ResponseSingleResult> mResponseDetails;
     Response<ResponseListBackdropsAndPosters> mResponseBackdrops;
@@ -109,6 +124,10 @@ public class MovieDetailsFragment extends Fragment {
     public MovieDetailsFragment() {
         // Required empty public constructor
     }
+
+//    public interface IFavouritesUpdated {
+//        public void favouritesUpdated(long id);
+//    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -123,10 +142,9 @@ public class MovieDetailsFragment extends Fragment {
     public void onStart() {
         super.onStart();
 
-        ((MainActivity) getActivity()).showBackButton();
-//        Toolbar toolbar = ((MainActivity) getActivity()).getToolbar();
-
-//        toolbar.setBackgroundColor(Color.parseColor("#80FFFFFF"));
+        dbHelper = new DBHelper(getActivity());
+        mRelativeLayout.setVisibility(View.GONE);
+        mFavouriteSparkButton.setOnClickListener(this);
 
         dialogDetails = new ProgressDialog(getActivity());
         dialogCast = new ProgressDialog(getActivity());
@@ -140,14 +158,7 @@ public class MovieDetailsFragment extends Fragment {
         dialogDetails.setMessage("Fetching movie details...");
         dialogSimilarMovies.setMessage("Fetching similar movies...");
 
-        dialogCast.show();
-        dialogReviews.show();
-        dialogTrailers.show();
-        dialogDetails.show();
-        dialogSimilarMovies.show();
-
         callAPIs();
-
     }
 
     private void callAPIs() {
@@ -156,10 +167,19 @@ public class MovieDetailsFragment extends Fragment {
 
         if (b == null)
             return;
+        else
+            mRelativeLayout.setVisibility(View.VISIBLE);
 
         movieID = b.getString(Constants.MOVIE_ID);
+        long id = Long.parseLong(movieID);
 
         restAdapter = new RESTAdapter(Constants.MOVIES_DB_BASE_URL);
+
+        if (dbHelper.isFavourite(id)) {
+            mFavouriteSparkButton.setChecked(false);
+        } else {
+            mFavouriteSparkButton.setChecked(true);
+        }
 
         callMovieDetailsAPI();
         callBackdropsAPI();
@@ -178,8 +198,11 @@ public class MovieDetailsFragment extends Fragment {
             public void onResponse(Call<ResponseComplete> call, Response<ResponseComplete> response) {
                 if (response.isSuccessful()) {
                     mResponseSimilarMovies = response;
+                    dialogSimilarMovies.show();
                     setSimilarMovies();
                 }
+
+
             }
 
             @Override
@@ -224,6 +247,7 @@ public class MovieDetailsFragment extends Fragment {
             public void onResponse(Call<ResponseListTrailer> call, Response<ResponseListTrailer> response) {
                 if (response.isSuccessful()) {
                     mResponseTrailers = response;
+                    dialogTrailers.show();
                     setTrailers();
                 }
             }
@@ -270,6 +294,7 @@ public class MovieDetailsFragment extends Fragment {
             public void onResponse(Call<ResponseListReviews> call, Response<ResponseListReviews> response) {
                 if (response.isSuccessful()) {
                     mResponseReviews = response;
+                    dialogReviews.show();
                     setReviews();
                 }
             }
@@ -317,6 +342,7 @@ public class MovieDetailsFragment extends Fragment {
             public void onResponse(Call<ResponseListCastAndCrew> call, Response<ResponseListCastAndCrew> response) {
                 if (response.isSuccessful()) {
                     mResponseCastCrew = response;
+                    dialogCast.show();
                     setCastCrew();
                 }
             }
@@ -412,6 +438,7 @@ public class MovieDetailsFragment extends Fragment {
             public void onResponse(Call<ResponseSingleResult> call, Response<ResponseSingleResult> response) {
                 if (response.isSuccessful()) {
                     mResponseDetails = response;
+                    dialogDetails.show();
                     setMovieDetails();
                 } else
                     Toast.makeText(getActivity(), "API response unsuccessful", Toast.LENGTH_SHORT).show();
@@ -427,6 +454,8 @@ public class MovieDetailsFragment extends Fragment {
 
     private void setMovieDetails() {
 
+        mMovieTitleTextView.setText(mResponseDetails.body().getTitle());
+
         mDurationTextView.setText(mResponseDetails.body().getRuntime() + " mins");
         mOverviewTextView.setText(mResponseDetails.body().getOverview());
 
@@ -437,8 +466,6 @@ public class MovieDetailsFragment extends Fragment {
             if (i != mResponseDetails.body().getGenres().size() - 1)
                 mGenresTextView.append(" | ");
         }
-
-        ((MainActivity) getActivity()).setToolbarText(mResponseDetails.body().getTitle());
 
         Picasso.with(getActivity()).load(Constants.IMAGE_PATH_PREFIX + mResponseDetails.body().getPosterPath()).placeholder(R.drawable.placeholder_no_image_available).fit().into(mMoviePosterImageView);
 
@@ -455,10 +482,24 @@ public class MovieDetailsFragment extends Fragment {
         SimpleDateFormat fmtOut = new SimpleDateFormat("dd MMM yyyy");
         mReleaseDateTextView.setText("Release Date:\n" + fmtOut.format(date));
 
-        // TODO: 27-Aug-16 Get imdb_id from API and create icon to show movie in IMDB app using intent
-
         mRatingTextView.setText(mResponseDetails.body().getVoteAverage() + " / 10");
 
         dialogDetails.dismiss();
+
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.add_to_favourites_button:
+                long id = Long.parseLong(movieID);
+                if (dbHelper.isFavourite(id)) {
+                    dbHelper.removeFromFavourites(id);
+                    mFavouriteSparkButton.setChecked(true);
+                } else {
+                    dbHelper.addToFavourites(id);
+                    mFavouriteSparkButton.setChecked(false);
+                }
+        }
     }
 }

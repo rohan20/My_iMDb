@@ -10,7 +10,7 @@
     </style>
     
     <style name="MyOverflowMenu">
-        <item name="android:src">@drawable/ic_more_vert_white_24dp</item>
+        <item name="android:src">@drawable/ic_more_vert_white_36dp</item>
     </style>
 
 </resources>

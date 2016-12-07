@@ -4,14 +4,6 @@
     <group android:checkableBehavior="single">
 
         <item
-            android:id="@+id/actiom_refresh"
-            android:icon="@drawable/ic_refresh_white_36dp"
-            android:orderInCategory="0"
-            android:title="Refresh"
-            app:showAsAction="always" />
-
-
-        <item
             android:id="@+id/action_popular_movies"
             android:orderInCategory="1"
             android:title="Popular Movies"

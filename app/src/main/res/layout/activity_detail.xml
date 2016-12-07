@@ -1,18 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/layout_portrait"
+    android:id="@+id/activity_detail"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.rohan.myimdb.MainActivity">
+    tools:context="com.rohan.myimdb.DetailActivity">
 
-    <fragment
-        class="com.rohan.myimdb.MoviesGridFragment"
+    <FrameLayout
+        android:id="@+id/container_details"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:layout="@layout/fragment_movies_grid" />
+        android:layout_height="match_parent" />
 
 </RelativeLayout>
-
-
-
