@@ -17,5 +17,10 @@ public class Constants {
     public static final String YOUTUBE_THUMBNAIL_PREFIX = "http://img.youtube.com/vi/";
     public static final String YOUTUBE_THUMBNAIL_SUFFIX = "/default.jpg";
 
+    public final static String SELECTED_MENU_ITEM = "menu_item_id";
+
+    public static final String MOST_POPULAR_MOVIES_LIST_KEY = "most_popular_key";
+    public static final String HIGHEST_RATED_MOVIES_LIST_KEY = "highest_rated_key";
+    public static final String FAVOURITES_MOVIES_LIST_KEY = "favourites_key";
 
 }

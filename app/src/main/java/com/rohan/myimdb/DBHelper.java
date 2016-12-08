@@ -46,7 +46,7 @@ public class DBHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    public void addToFavourites(long id) {
+    public void addToFavourites(String id) {
         SQLiteDatabase db = getWritableDatabase();
 
         ContentValues contentValues = new ContentValues();
@@ -56,7 +56,7 @@ public class DBHelper extends SQLiteOpenHelper {
         db.close();
     }
 
-    public boolean isFavourite(long id) {
+    public boolean isFavourite(String id) {
         SQLiteDatabase db = getReadableDatabase();
 
         Cursor cursor = db.query(TABLE_FAVOURITES, new String[]{COLUMN_MOVIE_ID}, COLUMN_MOVIE_ID + "=?", new String[]{String.valueOf(id)}, null, null, null, null);
@@ -67,14 +67,14 @@ public class DBHelper extends SQLiteOpenHelper {
             return false;
     }
 
-    public void removeFromFavourites(long id) {
+    public void removeFromFavourites(String id) {
         SQLiteDatabase db = getWritableDatabase();
         db.delete(TABLE_FAVOURITES, COLUMN_MOVIE_ID + " = ?", new String[]{String.valueOf(id)});
         db.close();
     }
 
-    public List<Long> getAllFavourites() {
-        List<Long> favouritesList = new ArrayList<>();
+    public List<String> getAllFavourites() {
+        List<String> favouritesList = new ArrayList<>();
 
         String selectQuery = "SELECT  * FROM " + TABLE_FAVOURITES;
 
@@ -83,7 +83,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
         if (cursor.moveToFirst()) {
             do {
-                favouritesList.add(Long.parseLong(cursor.getString(1)));
+                favouritesList.add(cursor.getString(1));
             } while (cursor.moveToNext());
         }
 

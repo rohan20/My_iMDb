@@ -11,9 +11,6 @@ public class ResponseListResults {
     @SerializedName("poster_path")
     @Expose
     private String posterPath;
-    @SerializedName("adult")
-    @Expose
-    private Boolean adult;
     @SerializedName("overview")
     @Expose
     private String overview;
@@ -22,10 +19,10 @@ public class ResponseListResults {
     private String releaseDate;
     @SerializedName("genre_ids")
     @Expose
-    private List<Long> genreIds = new ArrayList<Long>();
+    private List<String> genreIds = new ArrayList<>();
     @SerializedName("id")
     @Expose
-    private Long id;
+    private String id;
     @SerializedName("original_title")
     @Expose
     private String originalTitle;
@@ -40,16 +37,16 @@ public class ResponseListResults {
     private String backdropPath;
     @SerializedName("popularity")
     @Expose
-    private Double popularity;
+    private String popularity;
     @SerializedName("vote_count")
     @Expose
-    private Long voteCount;
+    private String voteCount;
     @SerializedName("video")
     @Expose
-    private Boolean video;
+    private String video;
     @SerializedName("vote_average")
     @Expose
-    private Double voteAverage;
+    private String voteAverage;
 
     /**
      * @return The posterPath
@@ -58,12 +55,6 @@ public class ResponseListResults {
         return posterPath;
     }
 
-    /**
-     * @return The adult
-     */
-    public Boolean getAdult() {
-        return adult;
-    }
 
     /**
      * @return The overview
@@ -82,14 +73,14 @@ public class ResponseListResults {
     /**
      * @return The genreIds
      */
-    public List<Long> getGenreIds() {
+    public List<String> getGenreIds() {
         return genreIds;
     }
 
     /**
      * @return The id
      */
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
@@ -124,28 +115,28 @@ public class ResponseListResults {
     /**
      * @return The popularity
      */
-    public Double getPopularity() {
+    public String getPopularity() {
         return popularity;
     }
 
     /**
      * @return The voteCount
      */
-    public Long getVoteCount() {
+    public String getVoteCount() {
         return voteCount;
     }
 
     /**
      * @return The video
      */
-    public Boolean getVideo() {
+    public String getVideo() {
         return video;
     }
 
     /**
      * @return The voteAverage
      */
-    public Double getVoteAverage() {
+    public String getVoteAverage() {
         return voteAverage;
     }
 }

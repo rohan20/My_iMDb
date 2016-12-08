@@ -54,10 +54,7 @@ public class MoviesGridRecyclerViewAdapter extends RecyclerView.Adapter<MoviesGr
         builder.append(Constants.IMAGE_PATH_PREFIX)
                 .append(mMoviesList.get(position).getPosterPath());
 
-        //set poster
         Picasso.with(mContext).load(builder.toString()).placeholder(R.drawable.placeholder_no_image_available).into(holder.mMoviePosterImageView);
-        //set favourites button
-//        holder.mMoviePosterFavouriteButton.setChecked(false);
 
         holder.mMoviePosterImageView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -68,10 +65,8 @@ public class MoviesGridRecyclerViewAdapter extends RecyclerView.Adapter<MoviesGr
                     return;
                 }
 
-                Log.e("size", mMoviesList.size() + "");
-                Log.e("id", mMoviesList.get(position).getId() + "");
-                long id = mMoviesList.get(position).getId();
-                mAdapterCallback.onMovieClickedCallback(String.valueOf(id));
+                String id = mMoviesList.get(position).getId();
+                mAdapterCallback.onMovieClickedCallback(id);
             }
         });
     }
@@ -84,13 +79,11 @@ public class MoviesGridRecyclerViewAdapter extends RecyclerView.Adapter<MoviesGr
     public class ViewHolder extends RecyclerView.ViewHolder {
 
         ImageView mMoviePosterImageView;
-//        SparkButton mMoviePosterFavouriteButton;
 
         public ViewHolder(View itemView) {
             super(itemView);
 
             mMoviePosterImageView = (ImageView) itemView.findViewById(R.id.movie_image_on_poster);
-//            mMoviePosterFavouriteButton = (SparkButton) itemView.findViewById(R.id.favourites_button_on_poster);
         }
     }
 

@@ -7,6 +7,7 @@
     android:orientation="horizontal">
 
     <fragment
+        android:id="@+id/fragment_grid"
         class="com.rohan.myimdb.MoviesGridFragment"
         android:layout_width="0dp"
         android:layout_height="match_parent"

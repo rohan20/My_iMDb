@@ -12,18 +12,42 @@ import java.util.List;
 /**
  * Created by Rohan on 18-Jul-16.
  */
-public class Movie {
+public class Movie implements Parcelable{
 
     private String posterPath;
     private String overview;
     private String releaseDate;
-    private List<Long> genreIds = new ArrayList<>();
-    private Long id;
+    private List<String> genreIds = new ArrayList<>();
+    private String id;
     private String title;
     private String backdropPath;
-    private Double voteAverage;
+    private String voteAverage;
 
-    private boolean isFavourite;
+    public Movie() {
+    }
+
+    protected Movie(Parcel in) {
+        posterPath = in.readString();
+        overview = in.readString();
+        releaseDate = in.readString();
+        genreIds = in.createStringArrayList();
+        id = in.readString();
+        title = in.readString();
+        backdropPath = in.readString();
+        voteAverage = in.readString();
+    }
+
+    public static final Creator<Movie> CREATOR = new Creator<Movie>() {
+        @Override
+        public Movie createFromParcel(Parcel in) {
+            return new Movie(in);
+        }
+
+        @Override
+        public Movie[] newArray(int size) {
+            return new Movie[size];
+        }
+    };
 
     public void setPosterPath(String posterPath) {
         this.posterPath = posterPath;
@@ -37,11 +61,11 @@ public class Movie {
         this.releaseDate = releaseDate;
     }
 
-    public void setGenreIds(List<Long> genreIds) {
+    public void setGenreIds(List<String> genreIds) {
         this.genreIds = genreIds;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -53,12 +77,8 @@ public class Movie {
         this.backdropPath = backdropPath;
     }
 
-    public void setVoteAverage(Double voteAverage) {
+    public void setVoteAverage(String voteAverage) {
         this.voteAverage = voteAverage;
-    }
-
-    public void setFavourite(boolean favourite) {
-        isFavourite = favourite;
     }
 
     public String getPosterPath() {
@@ -74,11 +94,11 @@ public class Movie {
         return releaseDate;
     }
 
-    public List<Long> getGenreIds() {
+    public List<String> getGenreIds() {
         return genreIds;
     }
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
@@ -90,11 +110,24 @@ public class Movie {
         return backdropPath;
     }
 
-    public Double getVoteAverage() {
+    public String getVoteAverage() {
         return voteAverage;
     }
 
-    public boolean isFavourite() {
-        return isFavourite;
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeString(posterPath);
+        parcel.writeString(overview);
+        parcel.writeString(releaseDate);
+        parcel.writeStringList(genreIds);
+        parcel.writeString(id);
+        parcel.writeString(title);
+        parcel.writeString(backdropPath);
+        parcel.writeString(voteAverage);
     }
 }

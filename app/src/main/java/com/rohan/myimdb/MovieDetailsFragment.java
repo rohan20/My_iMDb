@@ -1,13 +1,15 @@
 package com.rohan.myimdb;
 
 // TODO: 07-Dec-16 View details of 'first movie' in detail fragment when app opens in landscape/tablet mode.
-// TODO: 08-Dec-16 Handle orientation change network calls 
-// TODO: 08-Dec-16  
+// TODO: 08-Dec-16 Handle orientation change network calls
+// TODO: 08-Dec-16 Refresh favourites when favourite is removed/added.
 
 import android.app.ProgressDialog;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -129,18 +131,13 @@ public class MovieDetailsFragment extends Fragment implements View.OnClickListen
 //        public void favouritesUpdated(long id);
 //    }
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_movie_details, container, false);
         ButterKnife.bind(this, v);
-        return v;
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
 
         dbHelper = new DBHelper(getActivity());
         mRelativeLayout.setVisibility(View.GONE);
@@ -159,6 +156,8 @@ public class MovieDetailsFragment extends Fragment implements View.OnClickListen
         dialogSimilarMovies.setMessage("Fetching similar movies...");
 
         callAPIs();
+
+        return v;
     }
 
     private void callAPIs() {
@@ -175,7 +174,7 @@ public class MovieDetailsFragment extends Fragment implements View.OnClickListen
 
         restAdapter = new RESTAdapter(Constants.MOVIES_DB_BASE_URL);
 
-        if (dbHelper.isFavourite(id)) {
+        if (dbHelper.isFavourite(String.valueOf(id))) {
             mFavouriteSparkButton.setChecked(false);
         } else {
             mFavouriteSparkButton.setChecked(true);
@@ -191,6 +190,8 @@ public class MovieDetailsFragment extends Fragment implements View.OnClickListen
 
     private void callSimilarMoviesAPI() {
 
+        dialogSimilarMovies.show();
+
         Call<ResponseComplete> requestSimilarMovies = restAdapter.getMoviesAPI().getSimilarMovies(movieID, Constants.API_KEY);
 
         requestSimilarMovies.enqueue(new Callback<ResponseComplete>() {
@@ -198,10 +199,10 @@ public class MovieDetailsFragment extends Fragment implements View.OnClickListen
             public void onResponse(Call<ResponseComplete> call, Response<ResponseComplete> response) {
                 if (response.isSuccessful()) {
                     mResponseSimilarMovies = response;
-                    dialogSimilarMovies.show();
                     setSimilarMovies();
                 }
 
+                dialogSimilarMovies.dismiss();
 
             }
 
@@ -240,6 +241,8 @@ public class MovieDetailsFragment extends Fragment implements View.OnClickListen
 
     private void callTrailersAPI() {
 
+        dialogTrailers.show();
+
         Call<ResponseListTrailer> requestTrailers = restAdapter.getMoviesAPI().getTrailers(movieID, Constants.API_KEY);
 
         requestTrailers.enqueue(new Callback<ResponseListTrailer>() {
@@ -247,9 +250,10 @@ public class MovieDetailsFragment extends Fragment implements View.OnClickListen
             public void onResponse(Call<ResponseListTrailer> call, Response<ResponseListTrailer> response) {
                 if (response.isSuccessful()) {
                     mResponseTrailers = response;
-                    dialogTrailers.show();
                     setTrailers();
                 }
+
+                dialogTrailers.dismiss();
             }
 
             @Override
@@ -287,6 +291,8 @@ public class MovieDetailsFragment extends Fragment implements View.OnClickListen
 
     private void callReviewsAPI() {
 
+        dialogReviews.show();
+
         Call<ResponseListReviews> requestReviews = restAdapter.getMoviesAPI().getReviews(movieID, Constants.API_KEY);
 
         requestReviews.enqueue(new Callback<ResponseListReviews>() {
@@ -294,9 +300,10 @@ public class MovieDetailsFragment extends Fragment implements View.OnClickListen
             public void onResponse(Call<ResponseListReviews> call, Response<ResponseListReviews> response) {
                 if (response.isSuccessful()) {
                     mResponseReviews = response;
-                    dialogReviews.show();
                     setReviews();
                 }
+
+                dialogReviews.dismiss();
             }
 
             @Override
@@ -335,6 +342,9 @@ public class MovieDetailsFragment extends Fragment implements View.OnClickListen
     }
 
     private void callCastCrewAPI() {
+
+        dialogCast.show();
+
         Call<ResponseListCastAndCrew> requestCastCrew = restAdapter.getMoviesAPI().getCastCrew(movieID, Constants.API_KEY);
 
         requestCastCrew.enqueue(new Callback<ResponseListCastAndCrew>() {
@@ -342,9 +352,10 @@ public class MovieDetailsFragment extends Fragment implements View.OnClickListen
             public void onResponse(Call<ResponseListCastAndCrew> call, Response<ResponseListCastAndCrew> response) {
                 if (response.isSuccessful()) {
                     mResponseCastCrew = response;
-                    dialogCast.show();
                     setCastCrew();
                 }
+
+                dialogCast.dismiss();
             }
 
             @Override
@@ -431,6 +442,8 @@ public class MovieDetailsFragment extends Fragment implements View.OnClickListen
 
     private void callMovieDetailsAPI() {
 
+        dialogDetails.show();
+
         Call<ResponseSingleResult> requestMovieDetails = restAdapter.getMoviesAPI().getMovieDetails(movieID, Constants.API_KEY);
 
         requestMovieDetails.enqueue(new Callback<ResponseSingleResult>() {
@@ -438,10 +451,11 @@ public class MovieDetailsFragment extends Fragment implements View.OnClickListen
             public void onResponse(Call<ResponseSingleResult> call, Response<ResponseSingleResult> response) {
                 if (response.isSuccessful()) {
                     mResponseDetails = response;
-                    dialogDetails.show();
                     setMovieDetails();
-                } else
-                    Toast.makeText(getActivity(), "API response unsuccessful", Toast.LENGTH_SHORT).show();
+                }
+
+                dialogDetails.dismiss();
+                Toast.makeText(getActivity(), "API response unsuccessful", Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -493,11 +507,11 @@ public class MovieDetailsFragment extends Fragment implements View.OnClickListen
         switch (view.getId()) {
             case R.id.add_to_favourites_button:
                 long id = Long.parseLong(movieID);
-                if (dbHelper.isFavourite(id)) {
-                    dbHelper.removeFromFavourites(id);
+                if (dbHelper.isFavourite(String.valueOf(id))) {
+                    dbHelper.removeFromFavourites(String.valueOf(id));
                     mFavouriteSparkButton.setChecked(true);
                 } else {
-                    dbHelper.addToFavourites(id);
+                    dbHelper.addToFavourites(String.valueOf(id));
                     mFavouriteSparkButton.setChecked(false);
                 }
         }

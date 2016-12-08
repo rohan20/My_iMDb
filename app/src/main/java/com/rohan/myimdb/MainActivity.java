@@ -1,15 +1,17 @@
 package com.rohan.myimdb;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+
 import com.rohan.myimdb.Utils.Constants;
 
 // TODO: 17-Jul-16 Handle Android M internet permission case
 public class MainActivity extends AppCompatActivity implements MoviesGridFragment.OnMovieSelected {
 
     private final String LOG_TAG = MainActivity.class.getSimpleName();
-    private static final String DETAIL_FRAGMENT_TAG = "DFTAG";
+    public static final String DETAIL_FRAGMENT_TAG = "DFTAG";
 
     private boolean mTwoPane;
 
@@ -55,5 +57,10 @@ public class MainActivity extends AppCompatActivity implements MoviesGridFragmen
                     .commit();
         }
 
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
     }
 }
