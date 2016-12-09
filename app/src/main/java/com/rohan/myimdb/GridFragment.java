@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
@@ -17,14 +18,14 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.rohan.myimdb.Adapters.MoviesGridRecyclerViewAdapter;
 import com.rohan.myimdb.Models.Movie;
 import com.rohan.myimdb.POJOs.ResponseComplete;
 import com.rohan.myimdb.POJOs.ResponseListResults;
-import com.rohan.myimdb.Utils.AdapterCallback;
+import com.rohan.myimdb.Utils.IOnMovieSelectedAdapter;
 import com.rohan.myimdb.Utils.Constants;
+import com.rohan.myimdb.Utils.IOnMovieSelected;
 import com.rohan.myimdb.Utils.RESTAdapter;
 
 import java.util.ArrayList;
@@ -33,16 +34,14 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.Callback;
 
-public class MoviesGridFragment extends Fragment implements AdapterCallback {
+public class GridFragment extends Fragment implements IOnMovieSelectedAdapter {
 
-
+    private Bundle mBundleRecyclerViewState;
     private RESTAdapter retrofitAdapter;
-    private OnMovieSelected onMovieSelectedListener;
-    private retrofit2.Response<ResponseComplete> mResponse;
+    private IOnMovieSelected mOnMovieSelectedListener;
 
     private RecyclerView mRecyclerView;
     private MoviesGridRecyclerViewAdapter mGridAdapter;
-    private GridLayoutManager mGridLayoutManager;
 
     private ArrayList<Movie> mMostPopularMoviesList;
     private ArrayList<Movie> mHighestRatedMoviesList;
@@ -62,9 +61,9 @@ public class MoviesGridFragment extends Fragment implements AdapterCallback {
         super.onAttach(context);
 
         try {
-            onMovieSelectedListener = (OnMovieSelected) context;
+            mOnMovieSelectedListener = (IOnMovieSelected) context;
         } catch (ClassCastException e) {
-            Log.i("ClassCastException", "MainActivity must implement OnMovieSelected");
+            Log.i("ClassCastException", "MainActivity must implement IOnMovieSelected");
         }
 
     }
@@ -72,10 +71,10 @@ public class MoviesGridFragment extends Fragment implements AdapterCallback {
     @Override
     public void onDetach() {
         super.onDetach();
-        onMovieSelectedListener = null;
+        mOnMovieSelectedListener = null;
     }
 
-    public MoviesGridFragment() {
+    public GridFragment() {
         // Required empty public constructor
     }
 
@@ -83,21 +82,20 @@ public class MoviesGridFragment extends Fragment implements AdapterCallback {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-
-        preferences = getActivity().getPreferences(Context.MODE_PRIVATE);
-        preferencesEditor = preferences.edit();
-        preferences.getInt(Constants.SELECTED_MENU_ITEM, -1);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+
         View rootView = inflater.inflate(R.layout.fragment_movies_grid, container, false);
 
         mMostPopularMoviesList = new ArrayList<>();
         mHighestRatedMoviesList = new ArrayList<>();
         mFavouritesMoviesList = new ArrayList<>();
+
+        preferences = getActivity().getPreferences(Context.MODE_PRIVATE);
+        preferencesEditor = preferences.edit();
 
         init(rootView);
 
@@ -110,7 +108,7 @@ public class MoviesGridFragment extends Fragment implements AdapterCallback {
             mMostPopularMoviesList = savedInstanceState.getParcelableArrayList(Constants.MOST_POPULAR_MOVIES_LIST_KEY);
             mHighestRatedMoviesList = savedInstanceState.getParcelableArrayList(Constants.HIGHEST_RATED_MOVIES_LIST_KEY);
             mFavouritesMoviesList = savedInstanceState.getParcelableArrayList(Constants.FAVOURITES_MOVIES_LIST_KEY);
-            handleOptionsItemSelected(preferences.getInt(Constants.SELECTED_MENU_ITEM, -1));
+            handleOptionsItemSelected(preferences.getInt(Constants.SELECTED_MENU_ITEM, R.id.action_popular_movies));
         }
 
         return rootView;
@@ -127,11 +125,9 @@ public class MoviesGridFragment extends Fragment implements AdapterCallback {
         noFavouritesImage.setVisibility(View.GONE);
 
         mGridAdapter = new MoviesGridRecyclerViewAdapter(getActivity(), this);
-//        mGridAdapter.setRecyclerViewList(mMostPopularMoviesList);
+        handleOptionsItemSelected(preferences.getInt(Constants.SELECTED_MENU_ITEM, R.id.action_popular_movies));
 
-        handleOptionsItemSelected(preferences.getInt(Constants.SELECTED_MENU_ITEM, -1));
-
-        mGridLayoutManager = new GridLayoutManager(getActivity(), 2);
+        GridLayoutManager mGridLayoutManager = new GridLayoutManager(getActivity(), 2);
         mRecyclerView.setAdapter(mGridAdapter);
         mRecyclerView.setLayoutManager(mGridLayoutManager);
 
@@ -151,7 +147,7 @@ public class MoviesGridFragment extends Fragment implements AdapterCallback {
                 if (response.isSuccessful()) {
                     mMostPopularMoviesList.clear();
                     mMostPopularMoviesList.addAll(setMoviesList(response));
-                    handleOptionsItemSelected(preferences.getInt(Constants.SELECTED_MENU_ITEM, -1));
+                    handleOptionsItemSelected(preferences.getInt(Constants.SELECTED_MENU_ITEM, R.id.action_popular_movies));
                     dialog.dismiss();
                 }
 
@@ -207,25 +203,21 @@ public class MoviesGridFragment extends Fragment implements AdapterCallback {
     }
 
     @Override
-    public void onMovieClickedCallback(String movieID) {
-        onMovieSelectedListener.movieSelected(movieID);
-    }
-
-    public interface OnMovieSelected {
-        void movieSelected(String id);
+    public void onMovieClickedCallback() {
+        mOnMovieSelectedListener.movieSelected();
     }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater menuInflater) {
         mMenu = menu;
         menuInflater.inflate(R.menu.menu_main, menu);
-        MenuItem menuItem = menu.getItem(0);
+        MenuItem menuItem = menu.findItem(preferences.getInt(Constants.SELECTED_MENU_ITEM, R.id.action_popular_movies));
         menuItem.setChecked(true);
     }
 
     private void handleOptionsItemSelected(int itemID) {
 
-        if (mMenu != null && itemID != -1) {
+        if (mMenu != null) {
             MenuItem item = mMenu.findItem(itemID);
             item.setChecked(true);
         }
@@ -234,42 +226,55 @@ public class MoviesGridFragment extends Fragment implements AdapterCallback {
             case R.id.action_highest_rated:
                 noFavouritesImage.setVisibility(View.GONE);
                 mRecyclerView.setVisibility(View.VISIBLE);
+
                 preferencesEditor.putInt(Constants.SELECTED_MENU_ITEM, R.id.action_highest_rated).apply();
                 mGridAdapter.setRecyclerViewList(mHighestRatedMoviesList);
                 break;
 
             case R.id.action_favourites:
-                noFavouritesImage.setVisibility(View.GONE);
-                mRecyclerView.setVisibility(View.VISIBLE);
                 preferencesEditor.putInt(Constants.SELECTED_MENU_ITEM, R.id.action_favourites).apply();
-
-                mFavouritesMoviesList.clear();
-                List<String> favouritesIDList = new DBHelper(getActivity()).getAllFavourites();
-
-                for (Movie movie : mMostPopularMoviesList) {
-                    if (favouritesIDList.contains(movie.getId())) {
-                        mFavouritesMoviesList.add(movie);
-                    }
-                }
-
-                for (Movie movie : mHighestRatedMoviesList) {
-                    if (favouritesIDList.contains(movie.getId())) {
-                        mFavouritesMoviesList.add(movie);
-                    }
-                }
-
-                mGridAdapter.setRecyclerViewList(mFavouritesMoviesList);
-
-                if (mFavouritesMoviesList.size() == 0) {
-                    noFavouritesImage.setVisibility(View.VISIBLE);
-                    mRecyclerView.setVisibility(View.GONE);
-                }
+                fetchFavouritesFromDatabase();
+                break;
 
             default:
                 noFavouritesImage.setVisibility(View.GONE);
                 mRecyclerView.setVisibility(View.VISIBLE);
                 preferencesEditor.putInt(Constants.SELECTED_MENU_ITEM, R.id.action_popular_movies).apply();
                 mGridAdapter.setRecyclerViewList(mMostPopularMoviesList);
+        }
+    }
+
+    private void fetchFavouritesFromDatabase() {
+        noFavouritesImage.setVisibility(View.GONE);
+        mRecyclerView.setVisibility(View.VISIBLE);
+
+        mFavouritesMoviesList.clear();
+        List<String> favouritesIDList = new DBHelper(getActivity()).getAllFavourites();
+
+        for (Movie movie : mMostPopularMoviesList) {
+            if (favouritesIDList.contains(movie.getId())) {
+                mFavouritesMoviesList.add(movie);
+            }
+        }
+
+        for (Movie movie : mHighestRatedMoviesList) {
+            if (favouritesIDList.contains(movie.getId())) {
+                mFavouritesMoviesList.add(movie);
+            }
+        }
+
+        if (preferences.getInt(Constants.SELECTED_MENU_ITEM, R.id.action_popular_movies) == R.id.action_favourites) {
+            setFavourites();
+        }
+
+    }
+
+    private void setFavourites() {
+        mGridAdapter.setRecyclerViewList(mFavouritesMoviesList);
+
+        if (mFavouritesMoviesList.size() == 0) {
+            noFavouritesImage.setVisibility(View.VISIBLE);
+            mRecyclerView.setVisibility(View.GONE);
         }
     }
 
@@ -289,5 +294,32 @@ public class MoviesGridFragment extends Fragment implements AdapterCallback {
         outState.putParcelableArrayList(Constants.MOST_POPULAR_MOVIES_LIST_KEY, mMostPopularMoviesList);
         outState.putParcelableArrayList(Constants.HIGHEST_RATED_MOVIES_LIST_KEY, mHighestRatedMoviesList);
         outState.putParcelableArrayList(Constants.FAVOURITES_MOVIES_LIST_KEY, mFavouritesMoviesList);
+    }
+
+    public void updateFavouritesGrid() {
+        if (mFavouritesMoviesList != null) {
+            fetchFavouritesFromDatabase();
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        // save RecyclerView state
+        mBundleRecyclerViewState = new Bundle();
+        Parcelable listState = mRecyclerView.getLayoutManager().onSaveInstanceState();
+        mBundleRecyclerViewState.putParcelable(Constants.RECYCLER_VIEW_STATE_KEY, listState);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        // restore RecyclerView state
+        if (mBundleRecyclerViewState != null) {
+            Parcelable listState = mBundleRecyclerViewState.getParcelable(Constants.RECYCLER_VIEW_STATE_KEY);
+            mRecyclerView.getLayoutManager().onRestoreInstanceState(listState);
+        }
     }
 }

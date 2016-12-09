@@ -22,8 +22,32 @@ public class Movie implements Parcelable{
     private String title;
     private String backdropPath;
     private String voteAverage;
+    private String runtime;
 
     public Movie() {
+    }
+
+    public Movie(String posterPath, String overview, String releaseDate, List<String> genreIds, String id, String title, String backdropPath, String voteAverage, String runtime) {
+        this.posterPath = posterPath;
+        this.overview = overview;
+        this.releaseDate = releaseDate;
+        this.genreIds = genreIds;
+        this.id = id;
+        this.title = title;
+        this.backdropPath = backdropPath;
+        this.voteAverage = voteAverage;
+        this.runtime = runtime;
+    }
+
+    public Movie(String posterPath, String overview, String releaseDate, List<String> genreIds, String id, String title, String backdropPath, String voteAverage) {
+        this.posterPath = posterPath;
+        this.overview = overview;
+        this.releaseDate = releaseDate;
+        this.genreIds = genreIds;
+        this.id = id;
+        this.title = title;
+        this.backdropPath = backdropPath;
+        this.voteAverage = voteAverage;
     }
 
     protected Movie(Parcel in) {
@@ -35,6 +59,7 @@ public class Movie implements Parcelable{
         title = in.readString();
         backdropPath = in.readString();
         voteAverage = in.readString();
+        runtime = in.readString();
     }
 
     public static final Creator<Movie> CREATOR = new Creator<Movie>() {
@@ -114,6 +139,10 @@ public class Movie implements Parcelable{
         return voteAverage;
     }
 
+    public String getRuntime() {
+        return runtime;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -129,5 +158,6 @@ public class Movie implements Parcelable{
         parcel.writeString(title);
         parcel.writeString(backdropPath);
         parcel.writeString(voteAverage);
+        parcel.writeString(runtime);
     }
 }

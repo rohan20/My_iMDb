@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.rohan.myimdb.Models.CastCrew;
 import com.rohan.myimdb.POJOs.ResponseSingleCast;
 import com.rohan.myimdb.R;
 import com.rohan.myimdb.Utils.Constants;
@@ -24,13 +25,13 @@ import butterknife.ButterKnife;
 public class CastRecyclerViewAdapter extends RecyclerView.Adapter<CastRecyclerViewAdapter.ViewHolder> {
 
     private Context mContext;
-    private List<ResponseSingleCast> mCastCrewList;
+    private List<CastCrew> mCastCrewList;
 
     public CastRecyclerViewAdapter(Context context) {
         mContext = context;
     }
 
-    public void setRecyclerViewList(List<ResponseSingleCast> castCrewList) {
+    public void setRecyclerViewList(List<CastCrew> castCrewList) {
         mCastCrewList = castCrewList;
         notifyDataSetChanged();
     }

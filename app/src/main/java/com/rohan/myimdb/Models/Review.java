@@ -12,6 +12,12 @@ public class Review implements Parcelable {
     String author;
     String content;
 
+    public Review(String id, String author, String content) {
+        this.id = id;
+        this.author = author;
+        this.content = content;
+    }
+
     protected Review(Parcel in) {
         id = in.readString();
         author = in.readString();

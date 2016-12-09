@@ -1,13 +1,9 @@
 package com.rohan.myimdb;
 
-import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.widget.TextView;
 
 import com.rohan.myimdb.Utils.Constants;
-
-import static android.R.attr.fragment;
 
 public class DetailActivity extends AppCompatActivity {
 
@@ -16,16 +12,14 @@ public class DetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
 
-        Intent i = getIntent();
-        String id = i.getStringExtra(Constants.MOVIE_ID);
+        DetailFragment fragment = (DetailFragment) getSupportFragmentManager().findFragmentByTag(Constants.DETAIL_FRAGMENT_TAG);
 
-        MovieDetailsFragment fragment = new MovieDetailsFragment();
-        Bundle b = new Bundle();
-        b.putString(Constants.MOVIE_ID, id);
-        fragment.setArguments(b);
+        if (fragment == null) {
+            fragment = new DetailFragment();
+        }
 
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.container_details, fragment)
+                .replace(R.id.container_details, fragment, Constants.DETAIL_FRAGMENT_TAG)
                 .commit();
     }
 

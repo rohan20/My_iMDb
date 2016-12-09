@@ -2,7 +2,6 @@ package com.rohan.myimdb.Adapters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,13 +10,11 @@ import android.widget.Toast;
 
 import com.rohan.myimdb.Models.Movie;
 import com.rohan.myimdb.R;
-import com.rohan.myimdb.Utils.AdapterCallback;
+import com.rohan.myimdb.Utils.IOnMovieSelectedAdapter;
 import com.rohan.myimdb.Utils.Constants;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
-
-import static android.R.attr.id;
 
 /**
  * Created by Rohan on 17-Jul-16.
@@ -26,11 +23,11 @@ public class MoviesGridRecyclerViewAdapter extends RecyclerView.Adapter<MoviesGr
 
     private Context mContext;
     private List<Movie> mMoviesList;
-    private AdapterCallback mAdapterCallback;
+    private IOnMovieSelectedAdapter mMovieClickedAdapterListener;
 
-    public MoviesGridRecyclerViewAdapter(Context context, AdapterCallback adapterCallback) {
+    public MoviesGridRecyclerViewAdapter(Context context, IOnMovieSelectedAdapter adapterCallback) {
         mContext = context;
-        mAdapterCallback = adapterCallback;
+        mMovieClickedAdapterListener = adapterCallback;
     }
 
     public void setRecyclerViewList(List<Movie> moviesList) {
@@ -66,7 +63,9 @@ public class MoviesGridRecyclerViewAdapter extends RecyclerView.Adapter<MoviesGr
                 }
 
                 String id = mMoviesList.get(position).getId();
-                mAdapterCallback.onMovieClickedCallback(id);
+                mContext.getSharedPreferences(Constants.PREFERENCES, Context.MODE_PRIVATE).edit().putString(Constants.SELECTED_ID, id).apply();
+                mMovieClickedAdapterListener.onMovieClickedCallback();
+
             }
         });
     }

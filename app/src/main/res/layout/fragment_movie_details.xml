@@ -1,10 +1,11 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/details_fragment_scroll_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/white"
-    tools:context="com.rohan.myimdb.MovieDetailsFragment">
+    tools:context="com.rohan.myimdb.DetailFragment">
 
     <RelativeLayout
         android:id="@+id/parent_details_relative_layout"
@@ -135,9 +136,9 @@
                         android:layout_weight="1"
                         android:fontFamily="serif"
                         android:gravity="center"
-                        app:sparkbutton_inActiveImage="@drawable/ic_star_yellow_a400_36dp"
+                        app:sparkbutton_activeImage="@drawable/ic_star_border_grey_500_36dp"
                         app:sparkbutton_iconSize="45dp"
-                        app:sparkbutton_activeImage="@drawable/ic_star_border_grey_500_36dp" />
+                        app:sparkbutton_inActiveImage="@drawable/ic_star_yellow_a400_36dp" />
 
                 </LinearLayout>
 

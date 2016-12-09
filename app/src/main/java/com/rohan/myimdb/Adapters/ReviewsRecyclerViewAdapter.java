@@ -10,9 +10,11 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.rohan.myimdb.Models.Review;
 import com.rohan.myimdb.POJOs.ResponseSingleReview;
 import com.rohan.myimdb.R;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -24,13 +26,15 @@ import butterknife.ButterKnife;
 public class ReviewsRecyclerViewAdapter extends RecyclerView.Adapter<ReviewsRecyclerViewAdapter.ViewHolder> {
 
     Context mContext;
-    List<ResponseSingleReview> mReviews;
+//    List<ResponseSingleReview> mReviews;
+    ArrayList<Review> mReviews;
 
     public ReviewsRecyclerViewAdapter(Context context) {
         mContext = context;
     }
 
-    public void setReviewsList(List<ResponseSingleReview> reviews) {
+//    public void setReviewsList(List<ResponseSingleReview> reviews) {
+    public void setReviewsList(ArrayList<Review> reviews) {
         mReviews = reviews;
         notifyDataSetChanged();
     }

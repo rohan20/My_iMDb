@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.rohan.myimdb.Models.Movie;
 import com.rohan.myimdb.POJOs.ResponseListResults;
 import com.rohan.myimdb.R;
 import com.rohan.myimdb.Utils.Constants;
@@ -24,14 +25,14 @@ import butterknife.ButterKnife;
 public class SimilarMoviesRecyclerViewAdapter extends RecyclerView.Adapter<SimilarMoviesRecyclerViewAdapter.ViewHolder> {
 
     private Context mContext;
-    private List<ResponseListResults> mSimilarMoviesList;
+    private List<Movie> mSimilarMoviesList;
 
     public SimilarMoviesRecyclerViewAdapter(Context context) {
         mContext = context;
     }
 
-    public void setRecyclerViewList(List<ResponseListResults> castCrewList) {
-        mSimilarMoviesList = castCrewList;
+    public void setRecyclerViewList(List<Movie> similarMoviesList) {
+        mSimilarMoviesList = similarMoviesList;
         notifyDataSetChanged();
     }
 

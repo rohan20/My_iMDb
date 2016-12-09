@@ -11,11 +11,13 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.rohan.myimdb.Models.Trailer;
 import com.rohan.myimdb.POJOs.ResponseSingleTrailer;
 import com.rohan.myimdb.R;
 import com.rohan.myimdb.Utils.Constants;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -27,13 +29,15 @@ import butterknife.ButterKnife;
 public class TrailersRecyclerViewAdapter extends RecyclerView.Adapter<TrailersRecyclerViewAdapter.ViewHolder> {
 
     Context mContext;
-    List<ResponseSingleTrailer> mTrailers;
+//    List<ResponseSingleTrailer> mTrailers;
+    ArrayList<Trailer> mTrailers;
 
     public TrailersRecyclerViewAdapter(Context context) {
         mContext = context;
     }
 
-    public void setTrailersList(List<ResponseSingleTrailer> trailers) {
+//    public void setTrailersList(List<ResponseSingleTrailer> trailers) {
+    public void setTrailersList(ArrayList<Trailer> trailers) {
         mTrailers = trailers;
         notifyDataSetChanged();
     }

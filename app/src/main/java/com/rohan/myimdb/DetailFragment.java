@@ -1,15 +1,10 @@
 package com.rohan.myimdb;
 
-// TODO: 07-Dec-16 View details of 'first movie' in detail fragment when app opens in landscape/tablet mode.
-// TODO: 08-Dec-16 Handle orientation change network calls
-// TODO: 08-Dec-16 Refresh favourites when favourite is removed/added.
-
 import android.app.ProgressDialog;
-import android.content.res.Configuration;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -18,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,14 +23,21 @@ import com.rohan.myimdb.Adapters.CastRecyclerViewAdapter;
 import com.rohan.myimdb.Adapters.ReviewsRecyclerViewAdapter;
 import com.rohan.myimdb.Adapters.SimilarMoviesRecyclerViewAdapter;
 import com.rohan.myimdb.Adapters.TrailersRecyclerViewAdapter;
+import com.rohan.myimdb.Models.Backdrop;
+import com.rohan.myimdb.Models.CastCrew;
+import com.rohan.myimdb.Models.Movie;
+import com.rohan.myimdb.Models.Review;
+import com.rohan.myimdb.Models.Trailer;
 import com.rohan.myimdb.POJOs.ResponseComplete;
 import com.rohan.myimdb.POJOs.ResponseListBackdropsAndPosters;
 import com.rohan.myimdb.POJOs.ResponseListCastAndCrew;
 import com.rohan.myimdb.POJOs.ResponseListResults;
 import com.rohan.myimdb.POJOs.ResponseListReviews;
 import com.rohan.myimdb.POJOs.ResponseListTrailer;
+import com.rohan.myimdb.POJOs.ResponseSingleBackdrop;
 import com.rohan.myimdb.POJOs.ResponseSingleCast;
 import com.rohan.myimdb.POJOs.ResponseSingleCrew;
+import com.rohan.myimdb.POJOs.ResponseSingleGenre;
 import com.rohan.myimdb.POJOs.ResponseSingleResult;
 import com.rohan.myimdb.POJOs.ResponseSingleReview;
 import com.rohan.myimdb.POJOs.ResponseSingleTrailer;
@@ -55,13 +58,13 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-import static android.R.attr.id;
-
 /**
  * A simple {@link Fragment} subclass.
  */
-public class MovieDetailsFragment extends Fragment implements View.OnClickListener {
+public class DetailFragment extends Fragment implements View.OnClickListener {
 
+    @BindView(R.id.details_fragment_scroll_view)
+    ScrollView mScrollView;
     @BindView(R.id.image_slider)
     SliderLayout mImageSlider;
     @BindView(R.id.genre_text_view)
@@ -114,28 +117,26 @@ public class MovieDetailsFragment extends Fragment implements View.OnClickListen
     RESTAdapter restAdapter;
     DBHelper dbHelper;
 
-//    private IFavouritesUpdated favouriteUpdatedListener;
+    ArrayList<Review> mReviewsList;
+    ArrayList<Trailer> mTrailersList;
+    ArrayList<Movie> mSimilarMoviesList;
+    ArrayList<CastCrew> mCastCrewList;
+    ArrayList<Backdrop> mBackdropList;
+    Movie mCurrentMovie;
 
-    Response<ResponseSingleResult> mResponseDetails;
-    Response<ResponseListBackdropsAndPosters> mResponseBackdrops;
-    Response<ResponseListCastAndCrew> mResponseCastCrew;
-    Response<ResponseListTrailer> mResponseTrailers;
-    Response<ResponseListReviews> mResponseReviews;
-    Response<ResponseComplete> mResponseSimilarMovies;
-
-    public MovieDetailsFragment() {
+    public DetailFragment() {
         // Required empty public constructor
     }
 
-//    public interface IFavouritesUpdated {
-//        public void favouritesUpdated(long id);
-//    }
-
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+
         View v = inflater.inflate(R.layout.fragment_movie_details, container, false);
         ButterKnife.bind(this, v);
 
@@ -155,21 +156,25 @@ public class MovieDetailsFragment extends Fragment implements View.OnClickListen
         dialogDetails.setMessage("Fetching movie details...");
         dialogSimilarMovies.setMessage("Fetching similar movies...");
 
-        callAPIs();
+        mReviewsList = new ArrayList<>();
+        mTrailersList = new ArrayList<>();
+        mSimilarMoviesList = new ArrayList<>();
+        mCastCrewList = new ArrayList<>();
+        mBackdropList = new ArrayList<>();
+
+        callAPIs(savedInstanceState);
 
         return v;
     }
 
-    private void callAPIs() {
+    private void callAPIs(Bundle savedInstanceState) {
 
-        Bundle b = getArguments();
+        movieID = getActivity().getSharedPreferences(Constants.PREFERENCES, Context.MODE_PRIVATE).getString(Constants.SELECTED_ID, null);
 
-        if (b == null)
+        if (movieID == null)
             return;
-        else
-            mRelativeLayout.setVisibility(View.VISIBLE);
 
-        movieID = b.getString(Constants.MOVIE_ID);
+        mRelativeLayout.setVisibility(View.VISIBLE);
         long id = Long.parseLong(movieID);
 
         restAdapter = new RESTAdapter(Constants.MOVIES_DB_BASE_URL);
@@ -180,16 +185,55 @@ public class MovieDetailsFragment extends Fragment implements View.OnClickListen
             mFavouriteSparkButton.setChecked(true);
         }
 
-        callMovieDetailsAPI();
-        callBackdropsAPI();
-        callCastCrewAPI();
-        callReviewsAPI();
-        callTrailersAPI();
-        callSimilarMoviesAPI();
+        if (savedInstanceState == null) {
+            callMovieDetailsAPI();
+            callReviewsAPI();
+            callTrailersAPI();
+            callSimilarMoviesAPI();
+            callCastCrewAPI();
+            callBackdropsAPI();
+            return;
+        }
+
+        if (savedInstanceState.getParcelableArrayList(Constants.REVIEWS_LIST_KEY) != null) {
+            mReviewsList = savedInstanceState.getParcelableArrayList(Constants.REVIEWS_LIST_KEY);
+            setReviews();
+        } else
+            callReviewsAPI();
+
+        if (savedInstanceState.getParcelableArrayList(Constants.TRAILERS_LIST_KEY) != null) {
+            mTrailersList = savedInstanceState.getParcelableArrayList(Constants.TRAILERS_LIST_KEY);
+            setTrailers();
+        } else
+            callTrailersAPI();
+
+        if (savedInstanceState.getParcelableArrayList(Constants.SIMILAR_MOVIES_LIST_KEY) != null) {
+            mSimilarMoviesList = savedInstanceState.getParcelableArrayList(Constants.SIMILAR_MOVIES_LIST_KEY);
+            setSimilarMovies();
+        } else
+            callSimilarMoviesAPI();
+
+        if (savedInstanceState.getParcelableArrayList(Constants.CAST_CREW_LIST_KEY) != null) {
+            mCastCrewList = savedInstanceState.getParcelableArrayList(Constants.CAST_CREW_LIST_KEY);
+            setCastCrew();
+        } else
+            callCastCrewAPI();
+
+        if (savedInstanceState.getParcelableArrayList(Constants.BACKDROPS_LIST_KEY) != null) {
+            mBackdropList = savedInstanceState.getParcelableArrayList(Constants.BACKDROPS_LIST_KEY);
+            setMovieBackdrops();
+        } else
+            callBackdropsAPI();
+
+        if (savedInstanceState.getParcelable(Constants.CURRENT_MOVIE) != null) {
+            mCurrentMovie = savedInstanceState.getParcelable(Constants.CURRENT_MOVIE);
+            setMovieDetails();
+        } else
+            callMovieDetailsAPI();
+
     }
 
     private void callSimilarMoviesAPI() {
-
         dialogSimilarMovies.show();
 
         Call<ResponseComplete> requestSimilarMovies = restAdapter.getMoviesAPI().getSimilarMovies(movieID, Constants.API_KEY);
@@ -198,17 +242,18 @@ public class MovieDetailsFragment extends Fragment implements View.OnClickListen
             @Override
             public void onResponse(Call<ResponseComplete> call, Response<ResponseComplete> response) {
                 if (response.isSuccessful()) {
-                    mResponseSimilarMovies = response;
+                    for (ResponseListResults movie : response.body().getResults()) {
+                        mSimilarMoviesList.add(new Movie(movie.getPosterPath(), movie.getOverview(), movie.getReleaseDate(), movie.getGenreIds(), movie.getId(), movie.getTitle(), movie.getBackdropPath(), movie.getVoteAverage()));
+                    }
                     setSimilarMovies();
                 }
-
                 dialogSimilarMovies.dismiss();
-
             }
 
             @Override
             public void onFailure(Call<ResponseComplete> call, Throwable t) {
-                Toast.makeText(getActivity(), "API response unsuccessful", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "Unable to fetch similar movies", Toast.LENGTH_SHORT).show();
+                dialogSimilarMovies.dismiss();
             }
         });
 
@@ -219,19 +264,13 @@ public class MovieDetailsFragment extends Fragment implements View.OnClickListen
         mSimilarMoviesTextView.setVisibility(View.VISIBLE);
         mSimilarMoviesRecyclerView.setVisibility(View.VISIBLE);
 
-        List<ResponseListResults> similarMoviesList = new ArrayList<>();
-
-        for (ResponseListResults similarMovie : mResponseSimilarMovies.body().getResults()) {
-            similarMoviesList.add(similarMovie);
-        }
-
-        SimilarMoviesRecyclerViewAdapter adapter = new SimilarMoviesRecyclerViewAdapter(getActivity());
-        mSimilarMoviesRecyclerView.setAdapter(adapter);
-        adapter.setRecyclerViewList(similarMoviesList);
+        SimilarMoviesRecyclerViewAdapter similarMoviesAdapter = new SimilarMoviesRecyclerViewAdapter(getActivity());
+        mSimilarMoviesRecyclerView.setAdapter(similarMoviesAdapter);
+        similarMoviesAdapter.setRecyclerViewList(mSimilarMoviesList);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(), 2, LinearLayoutManager.HORIZONTAL, false);
         mSimilarMoviesRecyclerView.setLayoutManager(gridLayoutManager);
 
-        if (similarMoviesList.size() == 0) {
+        if (mSimilarMoviesList.size() == 0) {
             mSimilarMoviesTextView.setVisibility(View.GONE);
             mSimilarMoviesRecyclerView.setVisibility(View.GONE);
         }
@@ -240,7 +279,6 @@ public class MovieDetailsFragment extends Fragment implements View.OnClickListen
     }
 
     private void callTrailersAPI() {
-
         dialogTrailers.show();
 
         Call<ResponseListTrailer> requestTrailers = restAdapter.getMoviesAPI().getTrailers(movieID, Constants.API_KEY);
@@ -249,16 +287,18 @@ public class MovieDetailsFragment extends Fragment implements View.OnClickListen
             @Override
             public void onResponse(Call<ResponseListTrailer> call, Response<ResponseListTrailer> response) {
                 if (response.isSuccessful()) {
-                    mResponseTrailers = response;
+                    for (ResponseSingleTrailer trailer : response.body().getTrailers()) {
+                        mTrailersList.add(new Trailer(trailer.getId(), trailer.getKey(), trailer.getName(), trailer.getType()));
+                    }
                     setTrailers();
                 }
-
                 dialogTrailers.dismiss();
             }
 
             @Override
             public void onFailure(Call<ResponseListTrailer> call, Throwable t) {
-                Toast.makeText(getActivity(), "API response unsuccessful", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "Unable to fetch movie trailers", Toast.LENGTH_SHORT).show();
+                dialogTrailers.dismiss();
             }
         });
 
@@ -269,19 +309,13 @@ public class MovieDetailsFragment extends Fragment implements View.OnClickListen
         mTrailersTextView.setVisibility(View.VISIBLE);
         mTrailersRecyclerView.setVisibility(View.VISIBLE);
 
-        List<ResponseSingleTrailer> trailersList = new ArrayList<>();
-
-        for (ResponseSingleTrailer trailer : mResponseTrailers.body().getTrailers()) {
-            trailersList.add(trailer);
-        }
-
-        TrailersRecyclerViewAdapter adapter = new TrailersRecyclerViewAdapter(getActivity());
-        mTrailersRecyclerView.setAdapter(adapter);
-        adapter.setTrailersList(trailersList);
+        TrailersRecyclerViewAdapter trailersAdapter = new TrailersRecyclerViewAdapter(getActivity());
+        mTrailersRecyclerView.setAdapter(trailersAdapter);
+        trailersAdapter.setTrailersList(mTrailersList);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
         mTrailersRecyclerView.setLayoutManager(linearLayoutManager);
 
-        if (trailersList.size() == 0) {
+        if (mTrailersList.size() == 0) {
             mTrailersTextView.setVisibility(View.GONE);
             mTrailersRecyclerView.setVisibility(View.GONE);
         }
@@ -290,7 +324,6 @@ public class MovieDetailsFragment extends Fragment implements View.OnClickListen
     }
 
     private void callReviewsAPI() {
-
         dialogReviews.show();
 
         Call<ResponseListReviews> requestReviews = restAdapter.getMoviesAPI().getReviews(movieID, Constants.API_KEY);
@@ -299,50 +332,43 @@ public class MovieDetailsFragment extends Fragment implements View.OnClickListen
             @Override
             public void onResponse(Call<ResponseListReviews> call, Response<ResponseListReviews> response) {
                 if (response.isSuccessful()) {
-                    mResponseReviews = response;
+                    for (ResponseSingleReview review : response.body().getReviews()) {
+                        mReviewsList.add(new Review(review.getId(), review.getAuthor(), review.getContent()));
+                    }
                     setReviews();
                 }
-
                 dialogReviews.dismiss();
             }
 
             @Override
             public void onFailure(Call<ResponseListReviews> call, Throwable t) {
-                Toast.makeText(getActivity(), "API response unsuccessful", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "Unable to fetch movie reviews", Toast.LENGTH_SHORT).show();
+                dialogReviews.dismiss();
             }
         });
 
     }
 
     private void setReviews() {
-
         mReviewsTextView.setVisibility(View.VISIBLE);
         mReviewsRecyclerView.setVisibility(View.VISIBLE);
 
-        List<ResponseSingleReview> reviewsList = new ArrayList<>();
-
-        for (ResponseSingleReview review : mResponseReviews.body().getReviews()) {
-            reviewsList.add(review);
-        }
-
-        ReviewsRecyclerViewAdapter adapter = new ReviewsRecyclerViewAdapter(getActivity());
-        mReviewsRecyclerView.setAdapter(adapter);
-        adapter.setReviewsList(reviewsList);
+        ReviewsRecyclerViewAdapter reviewsAdapter = new ReviewsRecyclerViewAdapter(getActivity());
+        mReviewsRecyclerView.setAdapter(reviewsAdapter);
+        reviewsAdapter.setReviewsList(mReviewsList);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         mReviewsRecyclerView.setLayoutManager(layoutManager);
 
-        if (reviewsList.size() == 0) {
+
+        if (mReviewsList.size() == 0) {
             mReviewsTextView.setVisibility(View.GONE);
             mReviewsRecyclerView.setVisibility(View.GONE);
         }
 
         dialogReviews.dismiss();
-
-
     }
 
     private void callCastCrewAPI() {
-
         dialogCast.show();
 
         Call<ResponseListCastAndCrew> requestCastCrew = restAdapter.getMoviesAPI().getCastCrew(movieID, Constants.API_KEY);
@@ -351,7 +377,29 @@ public class MovieDetailsFragment extends Fragment implements View.OnClickListen
             @Override
             public void onResponse(Call<ResponseListCastAndCrew> call, Response<ResponseListCastAndCrew> response) {
                 if (response.isSuccessful()) {
-                    mResponseCastCrew = response;
+
+                    List<ResponseSingleCast> castList = new ArrayList<>();
+
+                    //for director's name
+                    for (ResponseSingleCrew crew : response.body().getCrew()) {
+                        if (crew.getJob().equals("Director")) {
+                            mDirectorTextView.setText("Directed By:\n" + crew.getName());
+                            break;
+                        }
+
+                        mCastCrewList.add(new CastCrew(null, crew.getName(), null, crew.getJob()));
+                    }
+
+                    int min = Math.min(response.body().getCast().size(), 15);
+                    for (int i = 0; i < min; i++) {
+                        castList.add(response.body().getCast().get(i));
+                    }
+
+
+                    for (ResponseSingleCast castItem : castList) {
+                        mCastCrewList.add(new CastCrew(castItem.getProfilePath(), castItem.getName(), castItem.getId().toString(), null));
+                    }
+
                     setCastCrew();
                 }
 
@@ -360,7 +408,8 @@ public class MovieDetailsFragment extends Fragment implements View.OnClickListen
 
             @Override
             public void onFailure(Call<ResponseListCastAndCrew> call, Throwable t) {
-                Toast.makeText(getActivity(), "API response unsuccessful", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "Unable to fetch movie cast", Toast.LENGTH_SHORT).show();
+                dialogCast.dismiss();
             }
         });
 
@@ -372,34 +421,25 @@ public class MovieDetailsFragment extends Fragment implements View.OnClickListen
         mCastCrewRecyclerView.setVisibility(View.VISIBLE);
 
         //set director's name
-        for (ResponseSingleCrew crew : mResponseCastCrew.body().getCrew()) {
-            if (crew.getJob().equals("Director")) {
-                mDirectorTextView.setText("Directed By:\n" + crew.getName());
+        for (CastCrew castCrew : mCastCrewList) {
+            if (castCrew.getJob() != null && castCrew.getJob().equals("Director")) {
+                mDirectorTextView.setText("Directed By:\n" + castCrew.getName());
                 break;
             }
         }
 
-        int min = Math.min(mResponseCastCrew.body().getCast().size(), 15);
-
-        List<ResponseSingleCast> castList = new ArrayList<>();
-
-        for (int i = 0; i < min; i++) {
-            castList.add(mResponseCastCrew.body().getCast().get(i));
-        }
-
-        CastRecyclerViewAdapter adapter = new CastRecyclerViewAdapter(getActivity());
-        mCastCrewRecyclerView.setAdapter(adapter);
-        adapter.setRecyclerViewList(castList);
+        CastRecyclerViewAdapter castCrewAdapter = new CastRecyclerViewAdapter(getActivity());
+        mCastCrewRecyclerView.setAdapter(castCrewAdapter);
+        castCrewAdapter.setRecyclerViewList(mCastCrewList);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
         mCastCrewRecyclerView.setLayoutManager(linearLayoutManager);
 
-        if (castList.size() == 0) {
+        if (mCastCrewList.size() == 0) {
             mCastCrewTextVIew.setVisibility(View.GONE);
             mCastCrewRecyclerView.setVisibility(View.GONE);
         }
 
         dialogCast.dismiss();
-
     }
 
     private void callBackdropsAPI() {
@@ -410,15 +450,18 @@ public class MovieDetailsFragment extends Fragment implements View.OnClickListen
             @Override
             public void onResponse(Call<ResponseListBackdropsAndPosters> call, Response<ResponseListBackdropsAndPosters> response) {
                 if (response.isSuccessful()) {
-                    mResponseBackdrops = response;
+
+                    int min = Math.min(response.body().getBackdrops().size(), 5);
+                    for (int i = 0; i < min; i++)
+                        mBackdropList.add(new Backdrop(response.body().getBackdrops().get(i).getFilePath()));
+
                     setMovieBackdrops();
-                } else
-                    Toast.makeText(getActivity(), "API response unsuccessful", Toast.LENGTH_SHORT).show();
+                }
             }
 
             @Override
             public void onFailure(Call<ResponseListBackdropsAndPosters> call, Throwable t) {
-                Toast.makeText(getActivity(), "Error", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "Unable to fetch movie backdrops", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -426,11 +469,9 @@ public class MovieDetailsFragment extends Fragment implements View.OnClickListen
 
     private void setMovieBackdrops() {
 
-        int min = Math.min(mResponseBackdrops.body().getBackdrops().size(), 5);
-
-        for (int i = 0; i < min; i++) {
+        for (Backdrop backdrop : mBackdropList) {
             DefaultSliderView mSliderView = new DefaultSliderView(getActivity());
-            mSliderView.image(Constants.IMAGE_PATH_PREFIX + mResponseBackdrops.body().getBackdrops().get(i).getFilePath());
+            mSliderView.image(Constants.IMAGE_PATH_PREFIX + backdrop.getFilePath());
             mImageSlider.addSlider(mSliderView);
         }
 
@@ -450,17 +491,22 @@ public class MovieDetailsFragment extends Fragment implements View.OnClickListen
             @Override
             public void onResponse(Call<ResponseSingleResult> call, Response<ResponseSingleResult> response) {
                 if (response.isSuccessful()) {
-                    mResponseDetails = response;
+                    List<String> genresList = new ArrayList<>();
+                    for (ResponseSingleGenre genre : response.body().getGenres()) {
+                        genresList.add(genre.getName());
+                    }
+
+                    mCurrentMovie = new Movie(response.body().getPosterPath(), response.body().getOverview(), response.body().getReleaseDate(), genresList, response.body().getId().toString(), response.body().getTitle(), response.body().getBackdropPath(), response.body().getVoteAverage().toString(), response.body().getRuntime().toString());
+
                     setMovieDetails();
                 }
-
                 dialogDetails.dismiss();
-                Toast.makeText(getActivity(), "API response unsuccessful", Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onFailure(Call<ResponseSingleResult> call, Throwable t) {
-                Toast.makeText(getActivity(), "Error", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "Unable to fetch movie details", Toast.LENGTH_SHORT).show();
+                dialogDetails.dismiss();
             }
         });
 
@@ -468,35 +514,35 @@ public class MovieDetailsFragment extends Fragment implements View.OnClickListen
 
     private void setMovieDetails() {
 
-        mMovieTitleTextView.setText(mResponseDetails.body().getTitle());
+        mMovieTitleTextView.setText(mCurrentMovie.getTitle());
 
-        mDurationTextView.setText(mResponseDetails.body().getRuntime() + " mins");
-        mOverviewTextView.setText(mResponseDetails.body().getOverview());
+        mDurationTextView.setText(mCurrentMovie.getRuntime() + " mins");
+        mOverviewTextView.setText(mCurrentMovie.getOverview());
 
         mGenresTextView.setText("");
 
-        for (int i = 0; i < mResponseDetails.body().getGenres().size(); i++) {
-            mGenresTextView.append(mResponseDetails.body().getGenres().get(i).getName());
-            if (i != mResponseDetails.body().getGenres().size() - 1)
+        for (int i = 0; i < mCurrentMovie.getGenreIds().size(); i++) {
+            mGenresTextView.append(mCurrentMovie.getGenreIds().get(i));
+            if (i != mCurrentMovie.getGenreIds().size() - 1)
                 mGenresTextView.append(" | ");
         }
 
-        Picasso.with(getActivity()).load(Constants.IMAGE_PATH_PREFIX + mResponseDetails.body().getPosterPath()).placeholder(R.drawable.placeholder_no_image_available).fit().into(mMoviePosterImageView);
+        Picasso.with(getActivity()).load(Constants.IMAGE_PATH_PREFIX + mCurrentMovie.getPosterPath()).placeholder(R.drawable.placeholder_no_image_available).fit().into(mMoviePosterImageView);
 
-        String dateString = mResponseDetails.body().getReleaseDate();
+        String dateString = mCurrentMovie.getReleaseDate();
 
         SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd");
         Date date = null;
         try {
             date = fmt.parse(dateString);
         } catch (ParseException e) {
-            mReleaseDateTextView.setText("Release Date:\n" + mResponseDetails.body().getReleaseDate());
+            mReleaseDateTextView.setText("Release Date:\n" + mCurrentMovie.getReleaseDate());
         }
 
         SimpleDateFormat fmtOut = new SimpleDateFormat("dd MMM yyyy");
         mReleaseDateTextView.setText("Release Date:\n" + fmtOut.format(date));
 
-        mRatingTextView.setText(mResponseDetails.body().getVoteAverage() + " / 10");
+        mRatingTextView.setText(mCurrentMovie.getVoteAverage() + " / 10");
 
         dialogDetails.dismiss();
 
@@ -508,12 +554,33 @@ public class MovieDetailsFragment extends Fragment implements View.OnClickListen
             case R.id.add_to_favourites_button:
                 long id = Long.parseLong(movieID);
                 if (dbHelper.isFavourite(String.valueOf(id))) {
+                    Toast.makeText(getActivity(), "Removed from favourites", Toast.LENGTH_SHORT).show();
                     dbHelper.removeFromFavourites(String.valueOf(id));
                     mFavouriteSparkButton.setChecked(true);
+
+                    if (getActivity() instanceof MainActivity)
+                        ((MainActivity) getActivity()).favouritesUpdated();
                 } else {
+                    Toast.makeText(getActivity(), "Added to favourites", Toast.LENGTH_SHORT).show();
                     dbHelper.addToFavourites(String.valueOf(id));
                     mFavouriteSparkButton.setChecked(false);
+
+                    if (getActivity() instanceof MainActivity)
+                        ((MainActivity) getActivity()).favouritesUpdated();
                 }
         }
     }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putParcelableArrayList(Constants.REVIEWS_LIST_KEY, mReviewsList);
+        outState.putParcelableArrayList(Constants.TRAILERS_LIST_KEY, mTrailersList);
+        outState.putParcelableArrayList(Constants.SIMILAR_MOVIES_LIST_KEY, mSimilarMoviesList);
+        outState.putParcelableArrayList(Constants.CAST_CREW_LIST_KEY, mCastCrewList);
+        outState.putParcelableArrayList(Constants.BACKDROPS_LIST_KEY, mBackdropList);
+        outState.putParcelable(Constants.CURRENT_MOVIE, mCurrentMovie);
+    }
+
 }

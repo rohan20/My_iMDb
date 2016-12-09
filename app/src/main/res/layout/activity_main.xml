@@ -8,7 +8,7 @@
 
     <fragment
         android:id="@+id/fragment_grid"
-        class="com.rohan.myimdb.MoviesGridFragment"
+        class="com.rohan.myimdb.GridFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:layout="@layout/fragment_movies_grid" />
