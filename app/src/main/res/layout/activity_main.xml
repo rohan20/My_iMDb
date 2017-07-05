@@ -4,11 +4,11 @@
     android:id="@+id/layout_portrait"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.rohan.myimdb.MainActivity">
+    tools:context="com.rohan.movieroll.MainActivity">
 
     <fragment
         android:id="@+id/fragment_grid"
-        class="com.rohan.myimdb.GridFragment"
+        class="com.rohan.movieroll.GridFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:layout="@layout/fragment_movies_grid" />
