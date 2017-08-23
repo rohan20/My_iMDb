@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/white"
-    tools:context="com.rohan.myimdb.DetailFragment">
+    tools:context="com.rohan.movieroll.DetailFragment">
 
     <RelativeLayout
         android:id="@+id/parent_details_relative_layout"

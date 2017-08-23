@@ -1,3 +1,7 @@
 <resources>
-    <string name="app_name">My iMDb</string>
+    <string name="app_name">Movie Roll</string>
+    <string name="admob_app_id">ca-app-pub-7734869303936340~7490116362</string>
+    <string name="ad_unit_id_native_movies_recycler_view_item">ca-app-pub-7734869303936340/5067967155</string>
+    <string name="ad_unit_id_banner_recycler_view_item">ca-app-pub-7734869303936340/8709976497</string>
+    <string name="ad_unit_id_full_screen">ca-app-pub-7734869303936340/8078942176</string>
 </resources>

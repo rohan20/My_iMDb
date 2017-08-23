@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.rohan.myimdb.GridFragment">
+    tools:context="com.rohan.movieroll.GridFragment">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar_movies_grid"
@@ -24,7 +24,7 @@
             android:maxLines="1"
             android:paddingEnd="5dp"
             android:paddingStart="5dp"
-            android:text="My iMDb"
+            android:text="@string/app_name"
             android:textColor="@android:color/white"
             android:textSize="20sp" />
 
