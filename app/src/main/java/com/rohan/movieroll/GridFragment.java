@@ -34,7 +34,11 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.Callback;
 
+import static com.rohan.movieroll.Adapters.MoviesGridRecyclerViewAdapter.AD_VIEW;
+
 public class GridFragment extends Fragment implements IOnMovieSelectedAdapter {
+
+    static final int AD_AFTER_NUMBER_OF_ITEMS = 4;
 
     private Bundle mBundleRecyclerViewState;
     private RESTAdapter retrofitAdapter;
@@ -128,6 +132,20 @@ public class GridFragment extends Fragment implements IOnMovieSelectedAdapter {
         handleOptionsItemSelected(preferences.getInt(Constants.SELECTED_MENU_ITEM, R.id.action_popular_movies));
 
         GridLayoutManager mGridLayoutManager = new GridLayoutManager(getActivity(), 2);
+
+        GridLayoutManager.SpanSizeLookup onSpanSizeLookup = new GridLayoutManager.SpanSizeLookup() {
+            @Override
+            public int getSpanSize(int position) {
+                switch (mGridAdapter.getItemViewType(position)) {
+                    case MoviesGridRecyclerViewAdapter.AD_VIEW:
+                        return 2;
+                    default:
+                        return 1;
+                }
+            }
+        };
+
+        mGridLayoutManager.setSpanSizeLookup(onSpanSizeLookup);
         mRecyclerView.setAdapter(mGridAdapter);
         mRecyclerView.setLayoutManager(mGridLayoutManager);
 
@@ -147,6 +165,15 @@ public class GridFragment extends Fragment implements IOnMovieSelectedAdapter {
                 if (response.isSuccessful()) {
                     mMostPopularMoviesList.clear();
                     mMostPopularMoviesList.addAll(setMoviesList(response));
+
+                    int size = mMostPopularMoviesList.size();
+                    for (int position = 0; position < size; position++) {
+                        if ((position + 1) % (AD_AFTER_NUMBER_OF_ITEMS + 1) == 0) {
+                            mMostPopularMoviesList.add(position, new Movie("-1"));
+                        }
+
+                    }
+
                     handleOptionsItemSelected(preferences.getInt(Constants.SELECTED_MENU_ITEM, R.id.action_popular_movies));
                     dialog.dismiss();
                 }
@@ -166,6 +193,15 @@ public class GridFragment extends Fragment implements IOnMovieSelectedAdapter {
                 if (response.isSuccessful()) {
                     mHighestRatedMoviesList.clear();
                     mHighestRatedMoviesList.addAll(setMoviesList(response));
+
+                    int size = mHighestRatedMoviesList.size();
+                    for (int position = 0; position < size; position++) {
+                        if ((position + 1) % (AD_AFTER_NUMBER_OF_ITEMS + 1) == 0) {
+                            mHighestRatedMoviesList.add(position, new Movie("-1"));
+                        }
+
+                    }
+
 
                     dialog.dismiss();
                 }
@@ -261,6 +297,14 @@ public class GridFragment extends Fragment implements IOnMovieSelectedAdapter {
             if (favouritesIDList.contains(movie.getId())) {
                 mFavouritesMoviesList.add(movie);
             }
+        }
+
+        int size = mFavouritesMoviesList.size();
+        for (int position = 0; position < size; position++) {
+            if ((position + 1) % (AD_AFTER_NUMBER_OF_ITEMS + 1) == 0) {
+                mFavouritesMoviesList.add(position, new Movie("-1"));
+            }
+
         }
 
         if (preferences.getInt(Constants.SELECTED_MENU_ITEM, R.id.action_popular_movies) == R.id.action_favourites) {
