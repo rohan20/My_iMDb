@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "885238966398",
+    "firebase_url": "https://movieroll-78671.firebaseio.com",
+    "project_id": "movieroll-78671",
+    "storage_bucket": "movieroll-78671.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:885238966398:android:ef929ce1f5c96798",
+        "android_client_info": {
+          "package_name": "com.rohan.movieroll"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "885238966398-gbbf9oidrkhhggui5dvjodsak4v808at.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBApXrkLoEiOVAAy_nyLWfA5p7FysL-cYg"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
