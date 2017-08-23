@@ -175,14 +175,15 @@ public class GridFragment extends Fragment implements IOnMovieSelectedAdapter {
                     }
 
                     handleOptionsItemSelected(preferences.getInt(Constants.SELECTED_MENU_ITEM, R.id.action_popular_movies));
-                    dialog.dismiss();
+                    if (dialog != null && dialog.isShowing())
+                        dialog.dismiss();
                 }
 
             }
 
             @Override
             public void onFailure(Call<ResponseComplete> call, Throwable t) {
-                Log.i("Message", t.getMessage());
+//                Log.i("Message", t.getMessage());
             }
         });
 
@@ -202,14 +203,14 @@ public class GridFragment extends Fragment implements IOnMovieSelectedAdapter {
 
                     }
 
-
-                    dialog.dismiss();
+                    if (dialog != null && dialog.isShowing())
+                        dialog.dismiss();
                 }
             }
 
             @Override
             public void onFailure(Call<ResponseComplete> call, Throwable t) {
-                Log.i("Message", t.getMessage());
+//                Log.i("Message", t.getMessage());
             }
         });
     }

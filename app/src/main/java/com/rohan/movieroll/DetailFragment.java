@@ -246,13 +246,15 @@ public class DetailFragment extends Fragment implements View.OnClickListener {
                     }
                     setSimilarMovies();
                 }
-                dialogSimilarMovies.dismiss();
+                if (dialogSimilarMovies != null && dialogSimilarMovies.isShowing())
+                    dialogSimilarMovies.dismiss();
             }
 
             @Override
             public void onFailure(Call<ResponseComplete> call, Throwable t) {
                 Toast.makeText(getActivity(), "Unable to fetch similar movies", Toast.LENGTH_SHORT).show();
-                dialogSimilarMovies.dismiss();
+                if (dialogSimilarMovies != null && dialogSimilarMovies.isShowing())
+                    dialogSimilarMovies.dismiss();
             }
         });
 
@@ -274,7 +276,8 @@ public class DetailFragment extends Fragment implements View.OnClickListener {
             mSimilarMoviesRecyclerView.setVisibility(View.GONE);
         }
 
-        dialogSimilarMovies.dismiss();
+        if (dialogSimilarMovies != null && dialogSimilarMovies.isShowing())
+            dialogSimilarMovies.dismiss();
     }
 
     private void callTrailersAPI() {
@@ -291,13 +294,15 @@ public class DetailFragment extends Fragment implements View.OnClickListener {
                     }
                     setTrailers();
                 }
-                dialogTrailers.dismiss();
+                if (dialogTrailers != null && dialogTrailers.isShowing())
+                    dialogTrailers.dismiss();
             }
 
             @Override
             public void onFailure(Call<ResponseListTrailer> call, Throwable t) {
                 Toast.makeText(getActivity(), "Unable to fetch movie trailers", Toast.LENGTH_SHORT).show();
-                dialogTrailers.dismiss();
+                if (dialogTrailers != null && dialogTrailers.isShowing())
+                    dialogTrailers.dismiss();
             }
         });
 
@@ -319,7 +324,8 @@ public class DetailFragment extends Fragment implements View.OnClickListener {
             mTrailersRecyclerView.setVisibility(View.GONE);
         }
 
-        dialogTrailers.dismiss();
+        if (dialogTrailers != null && dialogTrailers.isShowing())
+            dialogTrailers.dismiss();
     }
 
     private void callReviewsAPI() {
@@ -336,13 +342,16 @@ public class DetailFragment extends Fragment implements View.OnClickListener {
                     }
                     setReviews();
                 }
-                dialogReviews.dismiss();
+
+                if (dialogReviews != null && dialogReviews.isShowing())
+                    dialogReviews.dismiss();
             }
 
             @Override
             public void onFailure(Call<ResponseListReviews> call, Throwable t) {
                 Toast.makeText(getActivity(), "Unable to fetch movie reviews", Toast.LENGTH_SHORT).show();
-                dialogReviews.dismiss();
+                if (dialogReviews != null && dialogReviews.isShowing())
+                    dialogReviews.dismiss();
             }
         });
 
@@ -364,7 +373,8 @@ public class DetailFragment extends Fragment implements View.OnClickListener {
             mReviewsRecyclerView.setVisibility(View.GONE);
         }
 
-        dialogReviews.dismiss();
+        if (dialogReviews != null && dialogReviews.isShowing())
+            dialogReviews.dismiss();
     }
 
     private void callCastCrewAPI() {
@@ -402,13 +412,15 @@ public class DetailFragment extends Fragment implements View.OnClickListener {
                     setCastCrew();
                 }
 
-                dialogCast.dismiss();
+                if (dialogCast != null && dialogCast.isShowing())
+                    dialogCast.dismiss();
             }
 
             @Override
             public void onFailure(Call<ResponseListCastAndCrew> call, Throwable t) {
                 Toast.makeText(getActivity(), "Unable to fetch movie cast", Toast.LENGTH_SHORT).show();
-                dialogCast.dismiss();
+                if (dialogCast != null && dialogCast.isShowing())
+                    dialogCast.dismiss();
             }
         });
 
@@ -438,7 +450,8 @@ public class DetailFragment extends Fragment implements View.OnClickListener {
             mCastCrewRecyclerView.setVisibility(View.GONE);
         }
 
-        dialogCast.dismiss();
+        if (dialogCast != null && dialogCast.isShowing())
+            dialogCast.dismiss();
     }
 
     private void callBackdropsAPI() {
@@ -499,13 +512,16 @@ public class DetailFragment extends Fragment implements View.OnClickListener {
 
                     setMovieDetails();
                 }
-                dialogDetails.dismiss();
+
+                if (dialogDetails != null && dialogDetails.isShowing())
+                    dialogDetails.dismiss();
             }
 
             @Override
             public void onFailure(Call<ResponseSingleResult> call, Throwable t) {
                 Toast.makeText(getActivity(), "Unable to fetch movie details", Toast.LENGTH_SHORT).show();
-                dialogDetails.dismiss();
+                if (dialogDetails != null && dialogDetails.isShowing())
+                    dialogDetails.dismiss();
             }
         });
 
@@ -543,7 +559,8 @@ public class DetailFragment extends Fragment implements View.OnClickListener {
 
         mRatingTextView.setText(mCurrentMovie.getVoteAverage() + " / 10");
 
-        dialogDetails.dismiss();
+        if (dialogDetails != null && dialogDetails.isShowing())
+            dialogDetails.dismiss();
 
     }
 
