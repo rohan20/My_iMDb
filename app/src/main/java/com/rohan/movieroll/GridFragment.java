@@ -19,13 +19,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.InterstitialAd;
 import com.rohan.movieroll.Adapters.MoviesGridRecyclerViewAdapter;
 import com.rohan.movieroll.Models.Movie;
 import com.rohan.movieroll.POJOs.ResponseComplete;
 import com.rohan.movieroll.POJOs.ResponseListResults;
-import com.rohan.movieroll.Utils.IOnMovieSelectedAdapter;
 import com.rohan.movieroll.Utils.Constants;
 import com.rohan.movieroll.Utils.IOnMovieSelected;
+import com.rohan.movieroll.Utils.IOnMovieSelectedAdapter;
 import com.rohan.movieroll.Utils.RESTAdapter;
 
 import java.util.ArrayList;
@@ -33,8 +35,6 @@ import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
-
-import static com.rohan.movieroll.Adapters.MoviesGridRecyclerViewAdapter.AD_VIEW;
 
 public class GridFragment extends Fragment implements IOnMovieSelectedAdapter {
 
@@ -148,6 +148,10 @@ public class GridFragment extends Fragment implements IOnMovieSelectedAdapter {
         mGridLayoutManager.setSpanSizeLookup(onSpanSizeLookup);
         mRecyclerView.setAdapter(mGridAdapter);
         mRecyclerView.setLayoutManager(mGridLayoutManager);
+        mRecyclerView.setHasFixedSize(true);
+        mRecyclerView.setItemViewCacheSize(23);
+        mRecyclerView.setDrawingCacheEnabled(true);
+        mRecyclerView.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
 
         mToolbar = (Toolbar) v.findViewById(R.id.toolbar_movies_grid);
         ((MainActivity) getActivity()).setSupportActionBar(mToolbar);

@@ -1,6 +1,9 @@
 package com.rohan.movieroll.Adapters;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.res.Configuration;
+import android.support.v7.widget.LinearLayoutCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,12 +13,12 @@ import android.widget.Toast;
 
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.InterstitialAd;
 import com.google.android.gms.ads.NativeExpressAdView;
 import com.rohan.movieroll.Models.Movie;
 import com.rohan.movieroll.R;
-import com.rohan.movieroll.Utils.IOnMovieSelectedAdapter;
 import com.rohan.movieroll.Utils.Constants;
+import com.rohan.movieroll.Utils.IOnMovieSelectedAdapter;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -32,10 +35,12 @@ public class MoviesGridRecyclerViewAdapter extends RecyclerView.Adapter<Recycler
     private Context mContext;
     private List<Movie> mMoviesList;
     private IOnMovieSelectedAdapter mMovieClickedAdapterListener;
+    private SharedPreferences mPrefs;
 
     public MoviesGridRecyclerViewAdapter(Context context, IOnMovieSelectedAdapter adapterCallback) {
         mContext = context;
         mMovieClickedAdapterListener = adapterCallback;
+        mPrefs = mContext.getSharedPreferences(Constants.PREFERENCES, Context.MODE_PRIVATE);
     }
 
     public void setRecyclerViewList(List<Movie> moviesList) {
@@ -68,11 +73,17 @@ public class MoviesGridRecyclerViewAdapter extends RecyclerView.Adapter<Recycler
     }
 
     @Override
-    public void onBindViewHolder(final RecyclerView.ViewHolder viewholder, int position) {
+    public void onBindViewHolder(final RecyclerView.ViewHolder viewholder, final int position) {
 
         if (viewholder instanceof NativeAdViewHolder) {
 
-            NativeAdViewHolder holder = (NativeAdViewHolder) viewholder;
+            final NativeAdViewHolder holder = (NativeAdViewHolder) viewholder;
+
+            if (mContext.getResources().getConfiguration().orientation ==
+                    Configuration.ORIENTATION_LANDSCAPE) {
+                holder.itemView.setLayoutParams(new LinearLayoutCompat.LayoutParams(0, 0));
+                return;
+            }
 
             AdRequest request = new AdRequest.Builder()
                     .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)        // All emulators
@@ -97,15 +108,39 @@ public class MoviesGridRecyclerViewAdapter extends RecyclerView.Adapter<Recycler
             @Override
             public void onClick(View view) {
 
+                int movieSelectedNumberOfTimes = mPrefs.getInt(Constants.MOVIE_CLICKED_NUMBER_OF_TIMES, 0);
+
+                movieSelectedNumberOfTimes++;
+
+                mPrefs.edit().putInt(Constants.MOVIE_CLICKED_NUMBER_OF_TIMES, movieSelectedNumberOfTimes).apply();
+
                 if (holder.getAdapterPosition() >= mMoviesList.size()) {
                     Toast.makeText(mContext, "Please refresh", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
                 String id = movie.getId();
-                mContext.getSharedPreferences(Constants.PREFERENCES, Context.MODE_PRIVATE).edit().putString(Constants.SELECTED_ID, id).apply();
+                mPrefs.edit().putString(Constants.SELECTED_ID, id).apply();
                 mMovieClickedAdapterListener.onMovieClickedCallback();
 
+                //show interstial ad on every 3rd time a movie selected
+                if (mContext.getSharedPreferences(Constants.PREFERENCES, Context.MODE_PRIVATE)
+                        .getInt(Constants.MOVIE_CLICKED_NUMBER_OF_TIMES, 0) % 3 == 0) {
+                    final InterstitialAd interstitialAd = new InterstitialAd(mContext);
+                    interstitialAd.setAdUnitId(mContext.getString(R.string.ad_unit_id_full_screen));
+                    AdRequest adRequest = new AdRequest.Builder()
+                            .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)        // All emulators
+                            .addTestDevice("5BBDB114D900920A2045F20FC8A733CE")  // MyOnePlus2
+                            .build();
+                    interstitialAd.loadAd(adRequest);
+                    interstitialAd.setAdListener(new AdListener() {
+                        @Override
+                        public void onAdLoaded() {
+                            super.onAdLoaded();
+                            interstitialAd.show();
+                        }
+                    });
+                }
             }
         });
     }
@@ -133,15 +168,13 @@ public class MoviesGridRecyclerViewAdapter extends RecyclerView.Adapter<Recycler
         public NativeAdViewHolder(final View itemView) {
             super(itemView);
 
-            //hide add until it's loaded (see onAdLoaded())
-            itemView.setVisibility(View.GONE);
-
             mNativeAd = (NativeExpressAdView) itemView.findViewById(R.id.native_ad);
+
             mNativeAd.setAdListener(new AdListener() {
                 @Override
                 public void onAdLoaded() {
                     super.onAdLoaded();
-                    itemView.setVisibility(View.VISIBLE);
+                    mNativeAd.setVisibility(View.VISIBLE);
                 }
             });
         }

@@ -36,6 +36,8 @@ public class Constants {
     public static final String DETAIL_FRAGMENT_TAG = "detail_fragment_tag";
 
     public static final String PREFERENCES = "my_shared_prefs";
+    public static final String MOVIE_CLICKED_NUMBER_OF_TIMES = "movie_clicked_number_of_times";
+    public static final String SHOW_RECYCLER_VIEW_ADS = "show_reycler_view_ads";
 
     public static final String RECYCLER_VIEW_STATE_KEY = "recycler_view_state_key";
 
