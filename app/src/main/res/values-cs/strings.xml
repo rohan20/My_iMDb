@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="app_name">Movie Roll</string>
+
+    <!--for ads-->
+    <string name="admob_app_id">ca-app-pub-7734869303936340~7490116362</string>
+    <string name="ad_unit_id_native_movies_recycler_view_item">ca-app-pub-7734869303936340/5067967155</string>
+    <string name="ad_unit_id_banner">ca-app-pub-7734869303936340/8879197574</string>
+    <string name="ad_unit_id_full_screen">ca-app-pub-7734869303936340/8078942176</string>
 
     <!--for progress dialogs-->
     <string name="fetching_movies">Načtení filmů…</string>
@@ -36,5 +43,12 @@
     <string name="view_app_on_playstore">Klikněte na aplikaci a zobrazte ji v Obchodě Google Play</string>
 
     <string name="internet_error">Připojte prosím k internetu a zkuste to znovu</string>
+
+    <string name="please_refresh">Aktualizujte prosím</string>
+    <string name="facebook">facebook</string>
+    <string name="linkedin">linkedin</string>
+    <string name="github">github</string>
+    <string name="gmail">gmail</string>
+    <string name="quora">quora</string>
 
 </resources>
