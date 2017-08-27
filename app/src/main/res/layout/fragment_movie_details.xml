@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/white"
-    tools:context="com.rohan.movieroll.DetailFragment">
+    tools:context="com.rohan.movieroll.ui.DetailFragment">
 
     <RelativeLayout
         android:id="@+id/parent_details_relative_layout"
@@ -91,7 +91,6 @@
                     android:fontFamily="serif"
                     android:gravity="center"
                     android:padding="5dp"
-                    android:text="Release Date:\n"
                     android:textSize="14sp" />
 
                 <TextView
@@ -103,7 +102,6 @@
                     android:layout_gravity="center"
                     android:fontFamily="serif"
                     android:gravity="center"
-                    android:text="Directed By:\n"
                     android:textSize="14sp" />
 
 
@@ -154,7 +152,7 @@
             android:background="#f5f5f5"
             android:fontFamily="serif"
             android:padding="5dp"
-            android:text="Top Billed Cast" />
+            android:text="@string/top_billed_cast" />
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/cast_recycler_view"
@@ -173,7 +171,7 @@
             android:background="#f5f5f5"
             android:fontFamily="serif"
             android:padding="5dp"
-            android:text="Reviews" />
+            android:text="@string/reviews" />
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/reviews_recycler_view"
@@ -192,7 +190,7 @@
             android:background="#f5f5f5"
             android:fontFamily="serif"
             android:padding="5dp"
-            android:text="Trailers" />
+            android:text="@string/trailers" />
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/trailers_recycler_view"
@@ -211,7 +209,7 @@
             android:background="#f5f5f5"
             android:fontFamily="serif"
             android:padding="5dp"
-            android:text="Similar Movies" />
+            android:text="@string/similar_movies" />
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/similar_movies_recycler_view"

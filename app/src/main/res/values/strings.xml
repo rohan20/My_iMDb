@@ -1,7 +1,50 @@
 <resources>
     <string name="app_name">Movie Roll</string>
-    <string name="admob_app_id">YOUR_ADMOB_APP_ID_HERE</string>
-    <string name="ad_unit_id_native_movies_recycler_view_item">NATIVE_AD_ID_HERE</string>
-    <string name="ad_unit_id_banner">BANNER_AD_ID_HERE</string>
-    <string name="ad_unit_id_full_screen">INTERSTITIAL_AD_ID_HERE</string>
+
+    <!--for ads-->
+    <string name="admob_app_id">ca-app-pub-7734869303936340~7490116362</string>
+    <string name="ad_unit_id_native_movies_recycler_view_item">ca-app-pub-7734869303936340/5067967155</string>
+    <string name="ad_unit_id_banner">ca-app-pub-7734869303936340/8879197574</string>
+    <string name="ad_unit_id_full_screen">ca-app-pub-7734869303936340/8078942176</string>
+
+    <!--for progress dialogs-->
+    <string name="fetching_movies">Fetching movies…</string>
+    <string name="fetching_movie_cast_details">Fetching movie cast details…</string>
+    <string name="fetching_movie_reviews">Fetching movie reviews…</string>
+    <string name="fetching_movie_trailers">Fetching movie trailers…</string>
+    <string name="fetching_movie_details">Fetching movie details…</string>
+    <string name="fetching_similar_movies">Fetching similar movies…</string>
+
+    <!--api fetch errors-->
+    <string name="unable_to_fetch_similar_movies">Unable to fetch similar movies</string>
+    <string name="unable_to_fetch_movie_reviews">Unable to fetch movie reviews</string>
+    <string name="unable_to_fetch_movie_cast">Unable to fetch movie cast</string>
+    <string name="unable_to_fetch_movie_backdrops">Unable to fetch movie backdrops</string>
+    <string name="unable_to_fetch_movie_details">Unable to fetch movie details</string>
+
+    <!--movie details-->
+    <string name="directed_by">Directed By</string>
+    <string name="release_date">Release Date</string>
+    <string name="top_billed_cast">Top Billed Cast</string>
+    <string name="reviews">Reviews</string>
+    <string name="similar_movies">Similar Movies</string>
+    <string name="trailers">Trailers</string>
+
+    <!--menu items-->
+    <string name="popular_movies">Popular Movies</string>
+    <string name="highest_rated">Highest Rated</string>
+    <string name="favourites">Favourites</string>
+
+    <string name="removed_from_favourites">Removed from favourites</string>
+    <string name="added_to_favourites">Added to favourites</string>
+
+    <string name="please_refresh">Please refresh</string>
+    <string name="facebook">facebook</string>
+    <string name="linkedin">linkedin</string>
+    <string name="github">github</string>
+    <string name="gmail">gmail</string>
+    <string name="quora">quora</string>
+
+    <string name="view_app_on_playstore">Click on the app to view it on Google Play Store</string>
+
 </resources>

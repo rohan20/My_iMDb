@@ -6,22 +6,28 @@
         <item
             android:id="@+id/action_popular_movies"
             android:orderInCategory="1"
-            android:title="Popular Movies"
+            android:title="@string/popular_movies"
             app:showAsAction="never" />
 
         <item
             android:id="@+id/action_highest_rated"
             android:orderInCategory="2"
-            android:title="Highest Rated"
+            android:title="@string/highest_rated"
             app:showAsAction="never" />
 
         <item
             android:id="@+id/action_favourites"
             android:orderInCategory="3"
-            android:title="Favourites"
+            android:title="@string/favourites"
             app:showAsAction="never" />
 
 
     </group>
+
+    <item
+        android:id="@+id/action_other_apps"
+        android:orderInCategory="4"
+        android:title="Other Apps"
+        app:showAsAction="never" />
 </menu>
 

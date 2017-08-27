@@ -11,7 +11,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name="com.rohan.movieroll.MainActivity"
+            android:name=".ui.MainActivity"
             android:configChanges="orientation|keyboardHidden">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -19,7 +19,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="com.rohan.movieroll.DetailActivity"></activity>
+        <activity android:name=".ui.DetailActivity" />
+        <activity android:name=".ui.OtherAppsActivity"></activity>
     </application>
 
 </manifest>
