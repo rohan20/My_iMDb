@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -43,6 +44,7 @@ import com.rohan.movieroll.pojo.ResponseSingleResult;
 import com.rohan.movieroll.pojo.ResponseSingleReview;
 import com.rohan.movieroll.pojo.ResponseSingleTrailer;
 import com.rohan.movieroll.util.Constants;
+import com.rohan.movieroll.util.NetworkUtil;
 import com.rohan.movieroll.util.RESTAdapter;
 import com.squareup.picasso.Picasso;
 import com.varunest.sparkbutton.SparkButton;
@@ -169,6 +171,11 @@ public class DetailFragment extends Fragment implements View.OnClickListener {
     }
 
     private void callAPIs(Bundle savedInstanceState) {
+
+        if (!NetworkUtil.isNetworkConnected(getActivity())) {
+            Toast.makeText(getActivity(), getString(R.string.internet_error), Toast.LENGTH_LONG).show();
+            return;
+        }
 
         movieID = getActivity().getSharedPreferences(Constants.PREFERENCES, Context.MODE_PRIVATE).getString(Constants.SELECTED_ID, null);
 

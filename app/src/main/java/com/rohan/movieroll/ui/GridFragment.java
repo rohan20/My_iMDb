@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -19,6 +20,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
@@ -32,6 +35,7 @@ import com.rohan.movieroll.pojo.ResponseListResults;
 import com.rohan.movieroll.util.Constants;
 import com.rohan.movieroll.util.IOnMovieSelected;
 import com.rohan.movieroll.util.IOnMovieSelectedAdapter;
+import com.rohan.movieroll.util.NetworkUtil;
 import com.rohan.movieroll.util.RESTAdapter;
 
 import java.util.ArrayList;
@@ -48,6 +52,7 @@ public class GridFragment extends Fragment implements IOnMovieSelectedAdapter {
     private RESTAdapter retrofitAdapter;
     private IOnMovieSelected mOnMovieSelectedListener;
 
+    private RelativeLayout mRelativeLayout;
     private RecyclerView mRecyclerView;
     private MoviesGridRecyclerViewAdapter mGridAdapter;
 
@@ -97,6 +102,8 @@ public class GridFragment extends Fragment implements IOnMovieSelectedAdapter {
                              Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.fragment_movies_grid, container, false);
+
+        mRelativeLayout = rootView.findViewById(R.id.parent_grid_relative_layout);
 
         mMostPopularMoviesList = new ArrayList<>();
         mHighestRatedMoviesList = new ArrayList<>();
@@ -162,6 +169,14 @@ public class GridFragment extends Fragment implements IOnMovieSelectedAdapter {
     }
 
     private void callApi() {
+
+        if (!NetworkUtil.isNetworkConnected(getActivity())) {
+            if (dialog != null && dialog.isShowing())
+                dialog.dismiss();
+
+            Toast.makeText(getActivity(), getString(R.string.internet_error), Toast.LENGTH_LONG).show();
+            return;
+        }
 
         Call<ResponseComplete> requestMostPopular = retrofitAdapter.getMoviesAPI().getMoviesList(Constants.MOST_POPULAR, Constants.API_KEY);
         Call<ResponseComplete> requestHighestRated = retrofitAdapter.getMoviesAPI().getMoviesList(Constants.HIGHEST_RATED, Constants.API_KEY);
