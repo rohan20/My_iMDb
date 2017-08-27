@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!--for progress dialogs-->
+    <string name="fetching_movies">Načtení filmů…</string>
+    <string name="fetching_movie_cast_details">Načtení detailů filmu…</string>
+    <string name="fetching_movie_reviews">Načítání recenzí filmů…</string>
+    <string name="fetching_movie_trailers">Načítání filmových přívěsů…</string>
+    <string name="fetching_movie_details">Načítání detailů filmu…</string>
+    <string name="fetching_similar_movies">Načítání podobných filmů…</string>
+
+    <!--api fetch errors-->
+    <string name="unable_to_fetch_similar_movies">Nelze načíst podobné filmy</string>
+    <string name="unable_to_fetch_movie_reviews">Nelze načíst recenze filmů</string>
+    <string name="unable_to_fetch_movie_cast">Nelze načíst filmový snímek</string>
+    <string name="unable_to_fetch_movie_backdrops">Nelze načíst pozadí filmu</string>
+    <string name="unable_to_fetch_movie_details">Nelze načíst detaily filmu</string>
+
+    <!--movie details-->
+    <string name="directed_by">Režie</string>
+    <string name="release_date">Datum vydání</string>
+    <string name="top_billed_cast">Nejlépe účtované obsazení</string>
+    <string name="reviews">Filmové recenze</string>
+    <string name="similar_movies">Podobné filmy</string>
+    <string name="trailers">Filmové přívěsy</string>
+
+    <!--menu items-->
+    <string name="popular_movies">Oblíbené filmy</string>
+    <string name="highest_rated">Nejlépe hodnocené filmy</string>
+    <string name="favourites">Oblíbené</string>
+    <string name="other_apps">Ostatní aplikace</string>
+
+    <string name="removed_from_favourites">Odstraněna z oblíbených položek</string>
+    <string name="added_to_favourites">Přidáno do oblíbených</string>
+
+    <string name="view_app_on_playstore">Klikněte na aplikaci a zobrazte ji v Obchodě Google Play</string>
+
+    <string name="internet_error">Připojte prosím k internetu a zkuste to znovu</string>
+
+</resources>

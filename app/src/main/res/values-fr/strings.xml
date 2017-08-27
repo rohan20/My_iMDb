@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!--for progress dialogs-->
+    <string name="fetching_movies">Recherche de films…</string>
+    <string name="fetching_movie_cast_details">Récupérer les détails du casting du film…</string>
+    <string name="fetching_movie_reviews">Récupération des critiques de films…</string>
+    <string name="fetching_movie_trailers">Récupérer des bandes-annonces de films…</string>
+    <string name="fetching_movie_details">Récupérer les détails du film…</string>
+    <string name="fetching_similar_movies">Récupérer des films similaires…</string>
+
+    <!--api fetch errors-->
+    <string name="unable_to_fetch_similar_movies">Impossible d\'extraire des films similaires</string>
+    <string name="unable_to_fetch_movie_reviews">Impossible d\'extraire des critiques de films</string>
+    <string name="unable_to_fetch_movie_cast">Impossible d\'extraire la distribution de films</string>
+    <string name="unable_to_fetch_movie_backdrops">Impossible de récupérer des fonds de film</string>
+    <string name="unable_to_fetch_movie_details">Impossible d\'extraire les détails du film</string>
+
+    <!--movie details-->
+    <string name="directed_by">Dirigé par</string>
+    <string name="release_date">Date de sortie</string>
+    <string name="top_billed_cast">Top Billed Cast</string>
+    <string name="reviews">Critiques de films</string>
+    <string name="similar_movies">Films Similaires</string>
+    <string name="trailers">Bandes annonces</string>
+
+    <!--menu items-->
+    <string name="popular_movies">Films populaires</string>
+    <string name="highest_rated">Les mieux notés</string>
+    <string name="favourites">Favoris</string>
+    <string name="other_apps">Autres applications</string>
+
+    <string name="removed_from_favourites">Supprimé des favoris</string>
+    <string name="added_to_favourites">Ajouté aux favoris</string>
+
+    <string name="please_refresh">Veuillez recharger</string>
+
+    <string name="view_app_on_playstore">Cliquez sur l\'application pour l\'afficher sur Google Play Store</string>
+
+    <string name="internet_error">Connectez-vous à Internet et réessayez</string>
+
+</resources>

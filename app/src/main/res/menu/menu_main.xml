@@ -27,7 +27,7 @@
     <item
         android:id="@+id/action_other_apps"
         android:orderInCategory="4"
-        android:title="Other Apps"
+        android:title="@string/other_apps"
         app:showAsAction="never" />
 </menu>
 

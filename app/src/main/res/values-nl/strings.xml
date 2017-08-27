@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--for progress dialogs-->
+    <string name="fetching_movies">Films ophalen…</string>
+    <string name="fetching_movie_cast_details">Het ophalen van film cast details…</string>
+    <string name="fetching_movie_reviews">Het ophalen van filmrecensies…</string>
+    <string name="fetching_movie_trailers">Filmtrailers ophalen…</string>
+    <string name="fetching_movie_details">Het ophalen van filmdetails…</string>
+    <string name="fetching_similar_movies">Gelijkaardige films ophalen…</string>
+
+    <!--api fetch errors-->
+    <string name="unable_to_fetch_similar_movies">Kan geen gelijksoortige films ophalen</string>
+    <string name="unable_to_fetch_movie_reviews">Kan filmrecensies niet ophalen</string>
+    <string name="unable_to_fetch_movie_cast">Kan filmcast niet ophalen</string>
+    <string name="unable_to_fetch_movie_backdrops">Kan filmafbeeldingen niet ophalen</string>
+    <string name="unable_to_fetch_movie_details">Kan de filmgegevens niet ophalen</string>
+
+    <!--movie details-->
+    <string name="directed_by">Geregisseerd door</string>
+    <string name="release_date">Datum van publicatie</string>
+    <string name="top_billed_cast">Top gefactureerde cast</string>
+    <string name="reviews">Filmrecensies</string>
+    <string name="similar_movies">Soortgelijke films</string>
+    <string name="trailers">Film Trailers</string>
+
+    <!--menu items-->
+    <string name="popular_movies">Populaire films</string>
+    <string name="highest_rated">Hoogst gewaardeerd</string>
+    <string name="favourites">Favorieten</string>
+    <string name="other_apps">Andere apps</string>
+
+    <string name="removed_from_favourites">Verwijderd van favorieten</string>
+    <string name="added_to_favourites">Toegevoegd aan favorieten</string>
+
+    <string name="view_app_on_playstore">Klik op de app om het te bekijken in de Google Play Store</string>
+
+    <string name="internet_error">Gelieve verbinding te maken met internet en probeer het opnieuw</string>
+</resources>

@@ -34,9 +34,14 @@
     <string name="popular_movies">Popular Movies</string>
     <string name="highest_rated">Highest Rated</string>
     <string name="favourites">Favourites</string>
+    <string name="other_apps">Other Apps</string>
 
     <string name="removed_from_favourites">Removed from favourites</string>
     <string name="added_to_favourites">Added to favourites</string>
+
+    <string name="view_app_on_playstore">Click on the app to view it on Google Play Store</string>
+
+    <string name="internet_error">Please connect to the internet and try again</string>
 
     <string name="please_refresh">Please refresh</string>
     <string name="facebook">facebook</string>
@@ -45,6 +50,5 @@
     <string name="gmail">gmail</string>
     <string name="quora">quora</string>
 
-    <string name="view_app_on_playstore">Click on the app to view it on Google Play Store</string>
 
 </resources>

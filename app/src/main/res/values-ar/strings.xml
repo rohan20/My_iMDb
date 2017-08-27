@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--for progress dialogs-->
+    <string name="fetching_movies">جار جلب الأفلام…</string>
+    <string name="fetching_movie_cast_details">جلب تفاصيل إرسال الفيلم…</string>
+    <string name="fetching_movie_reviews">جار جلب تعليقات الأفلام…</string>
+    <string name="fetching_movie_trailers">جلب مقاطع الفيديو الدعائية…</string>
+    <string name="fetching_movie_details">جلب تفاصيل الفيلم…</string>
+    <string name="fetching_similar_movies">جلب أفلام مماثلة…</string>
+
+    <!--api fetch errors-->
+    <string name="unable_to_fetch_similar_movies">تعذر جلب أفلام مماثلة</string>
+    <string name="unable_to_fetch_movie_reviews">تعذر جلب تعليقات الأفلام</string>
+    <string name="unable_to_fetch_movie_cast">تعذر جلب الفيلم</string>
+    <string name="unable_to_fetch_movie_backdrops">تعذر جلب صور خلفية للسينما</string>
+    <string name="unable_to_fetch_movie_details">تعذر جلب تفاصيل الفيلم</string>
+
+    <!--movie details-->
+    <string name="directed_by">إخراج</string>
+    <string name="release_date">تاريخ النشر</string>
+    <string name="top_billed_cast">توب بيلد كاست</string>
+    <string name="reviews">ويستعرض الفيلم</string>
+    <string name="similar_movies">أفلام مماثلة</string>
+    <string name="trailers">فيلم مقطورة</string>
+
+    <!--menu items-->
+    <string name="popular_movies">أفلام شعبية</string>
+    <string name="highest_rated">الأعلى تقييما</string>
+    <string name="favourites">المفضلة</string>
+    <string name="other_apps">تطبيقات أخرى</string>
+
+    <string name="removed_from_favourites">تمت الإزالة من المفضلة</string>
+    <string name="added_to_favourites">تمت الإضافة إلى المفضلة</string>
+
+    <string name="view_app_on_playstore">انقر على التطبيق لمشاهدته على متجر غوغل بلاي</string>
+
+    <string name="internet_error">يرجى الاتصال بالإنترنت وإعادة المحاولة</string>
+
+</resources>
