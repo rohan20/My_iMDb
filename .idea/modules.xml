@@ -3,7 +3,9 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/My_iMDb.iml" filepath="$PROJECT_DIR$/My_iMDb.iml" />
+      <module fileurl="file://B:\Code\GitHubGateway\My_iMDb\My_iMDb.iml" filepath="B:\Code\GitHubGateway\My_iMDb\My_iMDb.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://B:\Code\GitHubGateway\My_iMDb\app\app.iml" filepath="B:\Code\GitHubGateway\My_iMDb\app\app.iml" />
     </modules>
   </component>
 </project>
