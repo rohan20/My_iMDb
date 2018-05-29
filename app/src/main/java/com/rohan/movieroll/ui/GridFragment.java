@@ -137,7 +137,7 @@ public class GridFragment extends Fragment implements IOnMovieSelectedAdapter {
             public boolean onQueryTextSubmit(String query) {
                 mRecyclerView.smoothScrollToPosition(0);
                 fetchSearchedMovies(query);
-                Toast.makeText(getContext(), "Searching for " + query + "...", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), getContext().getString(R.string.searching_for) + " " + query + "...", Toast.LENGTH_SHORT).show();
                 searchView.closeSearch();
                 return true;
             }

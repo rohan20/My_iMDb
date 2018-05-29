@@ -52,5 +52,6 @@
     <string name="quora">quora</string>
 
     <string name="search">Vyhledávání</string>
+    <string name="searching_for">Hledám </string>
 
 </resources>

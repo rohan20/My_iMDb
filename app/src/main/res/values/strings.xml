@@ -51,5 +51,6 @@
     <string name="quora">quora</string>
 
     <string name="search">Search</string>
+    <string name="searching_for">Searching for </string>
 
 </resources>
