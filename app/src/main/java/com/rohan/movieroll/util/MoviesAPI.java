@@ -18,32 +18,33 @@ import retrofit2.http.Query;
 public interface MoviesAPI {
 
     //get most_popular/top_rated movies
-    @GET("{type}")
+    @GET("movie/{type}")
     Call<ResponseComplete> getMoviesList(@Path("type") String type, @Query("api_key") String api_key);
 
     //get movie details
-    @GET("{movie_id}")
+    @GET("movie/{movie_id}")
     Call<ResponseSingleResult> getMovieDetails(@Path("movie_id") String movieID, @Query("api_key") String api_key);
 
     //get backdrop images
-    @GET("{movie_id}/images")
+    @GET("movie/{movie_id}/images")
     Call<ResponseListBackdropsAndPosters> getMovieBackdrops(@Path("movie_id") String movieID, @Query("api_key") String api_key);
 
     //get cast and crew
-    @GET("{movie_id}/credits")
+    @GET("movie/{movie_id}/credits")
     Call<ResponseListCastAndCrew> getCastCrew(@Path("movie_id") String movieID, @Query("api_key") String api_key);
 
     //get reviews
-    @GET("{movie_id}/reviews")
+    @GET("movie/{movie_id}/reviews")
     Call<ResponseListReviews> getReviews(@Path("movie_id") String movieID, @Query("api_key") String api_key);
 
     //get trailers
-    @GET("{movie_id}/videos")
+    @GET("movie/{movie_id}/videos")
     Call<ResponseListTrailer> getTrailers(@Path("movie_id") String movieID, @Query("api_key") String api_key);
 
     //get similar movies
-    @GET("{movie_id}/similar")
+    @GET("movie/{movie_id}/similar")
     Call<ResponseComplete> getSimilarMovies(@Path("movie_id") String movieID, @Query("api_key") String api_key);
 
-
+    @GET("search/movie")
+    Call<ResponseComplete> searchMovies(@Query("api_key") String API_KEY, @Query("query") String QUERY);
 }

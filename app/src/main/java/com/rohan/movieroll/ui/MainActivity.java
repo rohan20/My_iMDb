@@ -9,6 +9,7 @@ import android.os.Bundle;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
+import com.miguelcatalan.materialsearchview.MaterialSearchView;
 import com.rohan.movieroll.R;
 import com.rohan.movieroll.util.Constants;
 import com.rohan.movieroll.util.IOnMovieSelected;
@@ -20,6 +21,7 @@ public class MainActivity extends AppCompatActivity implements IOnMovieSelected 
     private boolean mTwoPane;
     private AdView mAdView;
     private SharedPreferences mPrefs;
+    private GridFragment gridFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,9 +79,16 @@ public class MainActivity extends AppCompatActivity implements IOnMovieSelected 
 
     public void favouritesUpdated() {
         if (mTwoPane) {
-            GridFragment gridFragment = (GridFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_grid);
+            gridFragment = (GridFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_grid);
             gridFragment.updateFavouritesGrid();
         }
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(gridFragment != null) {
+            gridFragment.onActivityResult(requestCode, resultCode, data);
+        }
+    }
 }
