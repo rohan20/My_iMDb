@@ -1,5 +1,6 @@
 package com.rohan.movieroll.ui;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -49,7 +50,7 @@ import static android.app.Activity.RESULT_OK;
 
 public class GridFragment extends Fragment implements IOnMovieSelectedAdapter {
 
-    static final int AD_AFTER_NUMBER_OF_ITEMS = 4;
+    static final int AD_AFTER_NUMBER_OF_ITEMS = 4, VOICE_RECOGNITION_REQUEST_CODE = 13;
 
     private Bundle mBundleRecyclerViewState;
     private RESTAdapter retrofitAdapter;
@@ -331,6 +332,10 @@ public class GridFragment extends Fragment implements IOnMovieSelectedAdapter {
                 startActivity(i);
                 break;
 
+            case R.id.action_voice_search:
+                startVoiceRecognition();
+                break;
+
             default:
                 noFavouritesImage.setVisibility(View.GONE);
                 mRecyclerView.setVisibility(View.VISIBLE);
@@ -479,4 +484,25 @@ public class GridFragment extends Fragment implements IOnMovieSelectedAdapter {
         });
     }
 
+    public void startVoiceRecognition() {
+        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+        intent.putExtra(RecognizerIntent.EXTRA_PROMPT, getContext().getString(R.string.search));
+        startActivityForResult(intent, VOICE_RECOGNITION_REQUEST_CODE);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(requestCode == VOICE_RECOGNITION_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+            ArrayList<String> matches = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+            if (matches != null) {
+                if(!matches.isEmpty()) {
+                    String query = matches.get(0);
+                    fetchSearchedMovies(query);
+                    Toast.makeText(getContext(), getContext().getString(R.string.searching_for) + " " + query + "...", Toast.LENGTH_LONG).show();
+                }
+            }
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
 }
