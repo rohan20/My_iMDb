@@ -51,4 +51,8 @@
     <string name="gmail">gmail</string>
     <string name="quora">quora</string>
 
+    <string name="search">بحث</string>
+    <string name="searching_for">البحث عن </string>
+
+
 </resources>

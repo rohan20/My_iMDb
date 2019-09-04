@@ -51,4 +51,6 @@
     <string name="gmail">gmail</string>
     <string name="quora">quora</string>
 
+    <string name="search">Zoeken</string>
+    <string name="searching_for">Op zoek naar </string>
 </resources>

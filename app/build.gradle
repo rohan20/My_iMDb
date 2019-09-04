@@ -1,16 +1,15 @@
 apply plugin: 'com.android.application'
-apply plugin: 'com.neenbedankt.android-apt'
 
 android {
-    compileSdkVersion 26
-    buildToolsVersion '26.0.1'
+    compileSdkVersion 27
+    buildToolsVersion '27.0.3'
 
     defaultConfig {
         applicationId "com.rohan.movieroll"
         minSdkVersion 17
-        targetSdkVersion 26
-        versionCode 3
-        versionName "2.0"
+        targetSdkVersion 27
+        versionCode 5
+        versionName "2.2"
 
         buildTypes.each {
             it.buildConfigField 'String', 'API_KEY', APIKey
@@ -18,37 +17,41 @@ android {
     }
     buildTypes {
         release {
-            minifyEnabled false
+            shrinkResources true
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
 }
 
+ext {
+    sup = '27.1.1'
+}
+
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-
-
-    compile 'com.android.support:appcompat-v7:26.0.1'
-    compile 'com.android.support:support-compat:26.0.1'
-    compile 'me.grantland:autofittextview:0.2.1'
-    compile 'com.android.support:cardview-v7:26.0.1'
-    compile 'com.android.support:recyclerview-v7:26.0.1'
-    compile 'com.github.varunest:sparkbutton:1.0.0'
-    compile 'com.squareup.retrofit2:retrofit:2.1.0'
-    compile 'com.squareup.retrofit2:converter-gson:2.1.0'
-    compile 'com.squareup.picasso:picasso:2.5.2'
-    compile 'com.facebook.fresco:fresco:0.7.0'
-    compile 'de.hdodenhof:circleimageview:2.1.0'
-    compile 'com.nineoldandroids:library:2.4.0'
-    compile 'com.amstronghuang.slider:library:1.1.3@aar'
-    compile 'com.android.support:design:26.0.1'
-    compile 'com.jakewharton:butterknife:8.2.1'
-    compile 'com.google.android.gms:play-services-ads:11.2.0'
-    compile 'com.google.firebase:firebase-core:11.2.0'
-    compile 'com.android.support.constraint:constraint-layout:1.0.2'
-    testCompile 'junit:junit:4.12'
-    apt 'com.jakewharton:butterknife-compiler:8.2.1'
+    implementation "com.android.support:appcompat-v7:$sup"
+    implementation "com.android.support:support-compat:$sup"
+    implementation 'me.grantland:autofittextview:0.2.1'
+    implementation "com.android.support:cardview-v7:$sup"
+    implementation "com.android.support:recyclerview-v7:$sup"
+    implementation 'com.github.varunest:sparkbutton:1.0.5'
+    implementation 'com.squareup.retrofit2:retrofit:2.4.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.4.0'
+    implementation 'com.squareup.picasso:picasso:2.5.2'
+    implementation 'com.facebook.fresco:fresco:1.9.0'
+    implementation 'de.hdodenhof:circleimageview:2.2.0'
+    implementation 'com.nineoldandroids:library:2.4.0'
+    implementation 'com.amstronghuang.slider:library:1.1.3@aar'
+    implementation "com.android.support:design:$sup"
+    implementation 'com.jakewharton:butterknife:8.8.1'
+    implementation 'com.google.android.gms:play-services-ads:15.0.1'
+    implementation 'com.google.firebase:firebase-core:16.0.0'
+    implementation 'com.android.support.constraint:constraint-layout:1.1.0'
+    testImplementation 'junit:junit:4.12'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
+    implementation 'com.miguelcatalan:materialsearchview:1.3.0'
 }
 
 apply plugin: 'com.google.gms.google-services'

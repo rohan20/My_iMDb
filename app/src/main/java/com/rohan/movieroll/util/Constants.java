@@ -8,7 +8,7 @@ import com.rohan.movieroll.BuildConfig;
 public class Constants {
 
     public static final String API_KEY = BuildConfig.API_KEY;
-    public static final String MOVIES_DB_BASE_URL = "http://api.themoviedb.org/3/movie/";
+    public static final String MOVIES_DB_BASE_URL = "http://api.themoviedb.org/3/";
 
     public static final String MOST_POPULAR = "popular";
     public static final String HIGHEST_RATED = "top_rated";

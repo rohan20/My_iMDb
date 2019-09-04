@@ -250,8 +250,10 @@ public class DetailFragment extends Fragment implements View.OnClickListener {
             @Override
             public void onResponse(Call<ResponseComplete> call, Response<ResponseComplete> response) {
                 if (response.isSuccessful()) {
-                    for (ResponseListResults movie : response.body().getResults()) {
-                        mSimilarMoviesList.add(new Movie(movie.getPosterPath(), movie.getOverview(), movie.getReleaseDate(), movie.getGenreIds(), movie.getId(), movie.getTitle(), movie.getBackdropPath(), movie.getVoteAverage()));
+                    if (response.body() != null) {
+                        for (ResponseListResults movie : response.body().getResults()) {
+                            mSimilarMoviesList.add(new Movie(movie.getPosterPath(), movie.getOverview(), movie.getReleaseDate(), movie.getGenreIds(), movie.getId(), movie.getTitle(), movie.getBackdropPath(), movie.getVoteAverage()));
+                        }
                     }
                     setSimilarMovies();
                 }
@@ -298,8 +300,10 @@ public class DetailFragment extends Fragment implements View.OnClickListener {
             @Override
             public void onResponse(Call<ResponseListTrailer> call, Response<ResponseListTrailer> response) {
                 if (response.isSuccessful()) {
-                    for (ResponseSingleTrailer trailer : response.body().getTrailers()) {
-                        mTrailersList.add(new Trailer(trailer.getId(), trailer.getKey(), trailer.getName(), trailer.getType()));
+                    if (response.body() != null) {
+                        for (ResponseSingleTrailer trailer : response.body().getTrailers()) {
+                            mTrailersList.add(new Trailer(trailer.getId(), trailer.getKey(), trailer.getName(), trailer.getType()));
+                        }
                     }
                     setTrailers();
                 }
@@ -346,8 +350,10 @@ public class DetailFragment extends Fragment implements View.OnClickListener {
             @Override
             public void onResponse(Call<ResponseListReviews> call, Response<ResponseListReviews> response) {
                 if (response.isSuccessful()) {
-                    for (ResponseSingleReview review : response.body().getReviews()) {
-                        mReviewsList.add(new Review(review.getId(), review.getAuthor(), review.getContent()));
+                    if (response.body() != null) {
+                        for (ResponseSingleReview review : response.body().getReviews()) {
+                            mReviewsList.add(new Review(review.getId(), review.getAuthor(), review.getContent()));
+                        }
                     }
                     setReviews();
                 }
@@ -399,26 +405,29 @@ public class DetailFragment extends Fragment implements View.OnClickListener {
                     List<ResponseSingleCast> castList = new ArrayList<>();
 
                     //for director's name
-                    for (ResponseSingleCrew crew : response.body().getCrew()) {
-                        if (crew.getJob().equals("Director")) {
-                            mDirectorTextView.setText(getString(R.string.directed_by) + ":\n" + crew.getName());
-                            break;
+                    if (response.body() != null) {
+                        for (ResponseSingleCrew crew : response.body().getCrew()) {
+                            if (crew.getJob().equals("Director")) {
+                                mDirectorTextView.setText(getString(R.string.directed_by) + ":\n" + crew.getName());
+                                break;
+                            }
+
+                            mCastCrewList.add(new CastCrew(null, crew.getName(), null, crew.getJob()));
                         }
 
-                        mCastCrewList.add(new CastCrew(null, crew.getName(), null, crew.getJob()));
+
+                        int min = Math.min(response.body().getCast().size(), 15);
+                        for (int i = 0; i < min; i++) {
+                            castList.add(response.body().getCast().get(i));
+                        }
+
+
+                        for (ResponseSingleCast castItem : castList) {
+                            mCastCrewList.add(new CastCrew(castItem.getProfilePath(), castItem.getName(), castItem.getId().toString(), null));
+                        }
+
+                        setCastCrew();
                     }
-
-                    int min = Math.min(response.body().getCast().size(), 15);
-                    for (int i = 0; i < min; i++) {
-                        castList.add(response.body().getCast().get(i));
-                    }
-
-
-                    for (ResponseSingleCast castItem : castList) {
-                        mCastCrewList.add(new CastCrew(castItem.getProfilePath(), castItem.getName(), castItem.getId().toString(), null));
-                    }
-
-                    setCastCrew();
                 }
 
                 if (dialogCast != null && dialogCast.isShowing())
@@ -472,11 +481,14 @@ public class DetailFragment extends Fragment implements View.OnClickListener {
             public void onResponse(Call<ResponseListBackdropsAndPosters> call, Response<ResponseListBackdropsAndPosters> response) {
                 if (response.isSuccessful()) {
 
-                    int min = Math.min(response.body().getBackdrops().size(), 5);
-                    for (int i = 0; i < min; i++)
-                        mBackdropList.add(new Backdrop(response.body().getBackdrops().get(i).getFilePath()));
+                    int min = 0;
+                    if (response.body() != null) {
+                        min = Math.min(response.body().getBackdrops().size(), 5);
+                        for (int i = 0; i < min; i++)
+                            mBackdropList.add(new Backdrop(response.body().getBackdrops().get(i).getFilePath()));
 
-                    setMovieBackdrops();
+                        setMovieBackdrops();
+                    }
                 }
             }
 

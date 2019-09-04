@@ -1,13 +1,14 @@
 package com.rohan.movieroll.ui;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.speech.RecognizerIntent;
 import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -26,6 +27,7 @@ import android.widget.Toast;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.InterstitialAd;
+import com.miguelcatalan.materialsearchview.MaterialSearchView;
 import com.rohan.movieroll.DBHelper;
 import com.rohan.movieroll.R;
 import com.rohan.movieroll.adapter.MoviesGridRecyclerViewAdapter;
@@ -44,9 +46,11 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.Callback;
 
+import static android.app.Activity.RESULT_OK;
+
 public class GridFragment extends Fragment implements IOnMovieSelectedAdapter {
 
-    static final int AD_AFTER_NUMBER_OF_ITEMS = 4;
+    static final int AD_AFTER_NUMBER_OF_ITEMS = 4, VOICE_RECOGNITION_REQUEST_CODE = 13;
 
     private Bundle mBundleRecyclerViewState;
     private RESTAdapter retrofitAdapter;
@@ -59,10 +63,12 @@ public class GridFragment extends Fragment implements IOnMovieSelectedAdapter {
     private ArrayList<Movie> mMostPopularMoviesList;
     private ArrayList<Movie> mHighestRatedMoviesList;
     private ArrayList<Movie> mFavouritesMoviesList;
+    private ArrayList<Movie> mSearchedMoviesList;
 
     SharedPreferences preferences;
     SharedPreferences.Editor preferencesEditor;
 
+    MaterialSearchView searchView;
     Toolbar mToolbar;
     ProgressDialog dialog;
     ImageView noFavouritesImage;
@@ -108,6 +114,7 @@ public class GridFragment extends Fragment implements IOnMovieSelectedAdapter {
         mMostPopularMoviesList = new ArrayList<>();
         mHighestRatedMoviesList = new ArrayList<>();
         mFavouritesMoviesList = new ArrayList<>();
+        mSearchedMoviesList = new ArrayList<>();
 
         preferences = getActivity().getPreferences(Context.MODE_PRIVATE);
         preferencesEditor = preferences.edit();
@@ -125,6 +132,22 @@ public class GridFragment extends Fragment implements IOnMovieSelectedAdapter {
             mFavouritesMoviesList = savedInstanceState.getParcelableArrayList(Constants.FAVOURITES_MOVIES_LIST_KEY);
             handleOptionsItemSelected(preferences.getInt(Constants.SELECTED_MENU_ITEM, R.id.action_popular_movies));
         }
+
+        searchView.setOnQueryTextListener(new MaterialSearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                mRecyclerView.smoothScrollToPosition(0);
+                fetchSearchedMovies(query);
+                Toast.makeText(getContext(), getContext().getString(R.string.searching_for) + " " + query + "...", Toast.LENGTH_SHORT).show();
+                searchView.closeSearch();
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+        });
 
         return rootView;
     }
@@ -166,6 +189,8 @@ public class GridFragment extends Fragment implements IOnMovieSelectedAdapter {
 
         mToolbar = (Toolbar) v.findViewById(R.id.toolbar_movies_grid);
         ((MainActivity) getActivity()).setSupportActionBar(mToolbar);
+
+        searchView = v.findViewById(R.id.search_view);
     }
 
     private void callApi() {
@@ -242,21 +267,23 @@ public class GridFragment extends Fragment implements IOnMovieSelectedAdapter {
 
         List<Movie> moviesList = new ArrayList<>();
 
-        for (ResponseListResults result : response.body().getResults()) {
-            Movie movie = new Movie();
+        if (response.body() != null) {
+            for (ResponseListResults result : response.body().getResults()) {
+                Movie movie = new Movie();
 
-            movie.setId(result.getId().toString());
-            movie.setTitle(result.getTitle());
-            movie.setPosterPath(result.getPosterPath());
-            movie.setOverview(result.getOverview());
-            movie.setVoteAverage(result.getVoteAverage().toString());
-            movie.setReleaseDate(result.getReleaseDate());
+                movie.setId(result.getId().toString());
+                movie.setTitle(result.getTitle());
+                movie.setPosterPath(result.getPosterPath());
+                movie.setOverview(result.getOverview());
+                movie.setVoteAverage(result.getVoteAverage().toString());
+                movie.setReleaseDate(result.getReleaseDate());
 
-            //optional
-            movie.setBackdropPath(result.getBackdropPath());
-            movie.setGenreIds(result.getGenreIds());
+                //optional
+                movie.setBackdropPath(result.getBackdropPath());
+                movie.setGenreIds(result.getGenreIds());
 
-            moviesList.add(movie);
+                moviesList.add(movie);
+            }
         }
 
         return moviesList;
@@ -273,6 +300,9 @@ public class GridFragment extends Fragment implements IOnMovieSelectedAdapter {
         menuInflater.inflate(R.menu.menu_main, menu);
         MenuItem menuItem = menu.findItem(preferences.getInt(Constants.SELECTED_MENU_ITEM, R.id.action_popular_movies));
         menuItem.setChecked(true);
+
+        MenuItem searchMenuItem = menu.findItem(R.id.action_search);
+        searchView.setMenuItem(searchMenuItem);
     }
 
     private void handleOptionsItemSelected(int itemID) {
@@ -300,6 +330,10 @@ public class GridFragment extends Fragment implements IOnMovieSelectedAdapter {
                 showFullScreenAd();
                 Intent i = new Intent(getActivity(), OtherAppsActivity.class);
                 startActivity(i);
+                break;
+
+            case R.id.action_voice_search:
+                startVoiceRecognition();
                 break;
 
             default:
@@ -412,5 +446,63 @@ public class GridFragment extends Fragment implements IOnMovieSelectedAdapter {
             Parcelable listState = mBundleRecyclerViewState.getParcelable(Constants.RECYCLER_VIEW_STATE_KEY);
             mRecyclerView.getLayoutManager().onRestoreInstanceState(listState);
         }
+    }
+
+    public void fetchSearchedMovies(String query) {
+        Call<ResponseComplete> requestSearch = retrofitAdapter.getMoviesAPI().searchMovies(Constants.API_KEY, query);
+        requestSearch.enqueue(new Callback<ResponseComplete>() {
+            @Override
+            public void onResponse(Call<ResponseComplete> call, retrofit2.Response<ResponseComplete> response) {
+
+                if (response.isSuccessful()) {
+                    mSearchedMoviesList.clear();
+                    mSearchedMoviesList.addAll(setMoviesList(response));
+
+                    int size = mSearchedMoviesList.size();
+                    for (int position = 0; position < size; position++) {
+                        if ((position + 1) % (AD_AFTER_NUMBER_OF_ITEMS + 1) == 0) {
+                            mSearchedMoviesList.add(position, new Movie("-1"));
+                        }
+
+                    }
+
+                    if (dialog != null && dialog.isShowing())
+                        dialog.dismiss();
+                    noFavouritesImage.setVisibility(View.GONE);
+                    mRecyclerView.setVisibility(View.VISIBLE);
+                    mGridAdapter.setRecyclerViewList(mSearchedMoviesList);
+                } else {
+                    // Log.d("RESPONSE UNSUCCESSFULL", "Couldn't search movies");
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<ResponseComplete> call, Throwable t) {
+                // Log.i("Message", t.getMessage());
+            }
+        });
+    }
+
+    public void startVoiceRecognition() {
+        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+        intent.putExtra(RecognizerIntent.EXTRA_PROMPT, getContext().getString(R.string.search));
+        startActivityForResult(intent, VOICE_RECOGNITION_REQUEST_CODE);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(requestCode == VOICE_RECOGNITION_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+            ArrayList<String> matches = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+            if (matches != null) {
+                if(!matches.isEmpty()) {
+                    String query = matches.get(0);
+                    fetchSearchedMovies(query);
+                    Toast.makeText(getContext(), getContext().getString(R.string.searching_for) + " " + query + "...", Toast.LENGTH_LONG).show();
+                }
+            }
+        }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 }

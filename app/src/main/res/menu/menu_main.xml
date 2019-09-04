@@ -1,23 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/action_search"
+        android:orderInCategory="1"
+        android:icon="@drawable/ic_search_white_24dp"
+        android:title="@string/search"
+        app:showAsAction="ifRoom"/>
+
+    <item
+        android:id="@+id/action_voice_search"
+        android:orderInCategory="2"
+        android:icon="@drawable/ic_keyboard_voice_white_24dp"
+        android:title="Voice Search"
+        app:showAsAction="ifRoom"/>
+
     <group android:checkableBehavior="single">
 
         <item
             android:id="@+id/action_popular_movies"
-            android:orderInCategory="1"
+            android:orderInCategory="3"
             android:title="@string/popular_movies"
             app:showAsAction="never" />
 
         <item
             android:id="@+id/action_highest_rated"
-            android:orderInCategory="2"
+            android:orderInCategory="4"
             android:title="@string/highest_rated"
             app:showAsAction="never" />
 
         <item
             android:id="@+id/action_favourites"
-            android:orderInCategory="3"
+            android:orderInCategory="5"
             android:title="@string/favourites"
             app:showAsAction="never" />
 
@@ -26,7 +40,7 @@
 
     <item
         android:id="@+id/action_other_apps"
-        android:orderInCategory="4"
+        android:orderInCategory="6"
         android:title="@string/other_apps"
         app:showAsAction="never" />
 </menu>
